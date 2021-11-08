@@ -1,35 +1,28 @@
-package cora.schema;
+package cora.app;
 
 import static graphql.GraphQL.newGraphQL;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Component;
-
-import cora.graph.GraphInstance;
-import cora.graph.GraphNode;
-import cora.parser.DSLParser;
 import graphql.GraphQL;
 import graphql.language.Definition;
 import graphql.language.ObjectTypeDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 
-@Component
+
 public class SchemaController {
 
-    final GraphRuntimeWiring graphRuntimeWiring;
+    final CoraRuntimeWiring graphRuntimeWiring;
 
-    final GraphTypeRegistry graphTypeRegistry;
+    final CoraTypeRegistry graphTypeRegistry;
 
     private GraphQLSchema graphQLSchema;
 
     private final SchemaGenerator schemaGenerator;
 
 
-    public SchemaController(GraphRuntimeWiring graphRuntimeWiring, GraphTypeRegistry graphTypeRegistry) {
+    public SchemaController(CoraRuntimeWiring graphRuntimeWiring, CoraTypeRegistry graphTypeRegistry) {
         this.graphRuntimeWiring = graphRuntimeWiring;
         this.graphTypeRegistry = graphTypeRegistry;
         this.schemaGenerator = new SchemaGenerator();
@@ -68,8 +61,8 @@ public class SchemaController {
                 "  }\n" +
                 "}";
         List<Definition> parse = DSLParser.parseSchema(s);
-        GraphNode node = new GraphNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
-        GraphInstance.merge(node);
+        CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
+        CoraGraph.merge(node);
         this.addNewTypeAndDataFetcherInGraphQL(node);
         graphTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(graphTypeRegistry.getTypeDefinitionRegistry()
@@ -80,7 +73,7 @@ public class SchemaController {
     public GraphQL addTypeInGraphQL(String schema){
         List<Definition> parse = DSLParser.parseSchema(schema);
         //GraphInstance.merge(parse);
-        GraphNode node = new GraphNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
+        CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
         this.addNewTypeAndDataFetcherInGraphQL(node);
         graphTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(graphTypeRegistry.getTypeDefinitionRegistry()
@@ -89,7 +82,7 @@ public class SchemaController {
     }
 
 
-    private void addNewTypeAndDataFetcherInGraphQL(GraphNode graphNode){
+    private void addNewTypeAndDataFetcherInGraphQL(CoraNode graphNode){
         graphTypeRegistry.addGraphNode(graphNode);
         graphRuntimeWiring.addNewSchemaDataFetcher(graphNode);
     }

@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import graphql.Scalars;
 import graphql.language.Definition;
 import graphql.language.ListType;
 import graphql.language.ObjectTypeDefinition;
 import graphql.language.Type;
 import graphql.language.TypeName;
 
-public class GraphNode {
+public class CoraNode {
 
     private String id;
 
@@ -24,7 +23,7 @@ public class GraphNode {
 
     private List<String> children;
 
-    public GraphNode(String name, Definition definition, Map<String, Type> typeMap, List<String> children) {
+    public CoraNode(String name, Definition definition, Map<String, Type> typeMap, List<String> children) {
         this.name = name;
         this.definition = definition;
         this.typeMap = typeMap;
@@ -82,9 +81,9 @@ public class GraphNode {
             this.definition = definition;
             definition.getFieldDefinitions().forEach(fieldDefinition -> {
                 typeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
-                if (!Scalar.getScalars().contains(((TypeName) fieldDefinition.getType()).getName())) {
+                if (!CoraScalar.getScalars().contains(((TypeName) fieldDefinition.getType()).getName())) {
                     if (fieldDefinition.getType() instanceof ListType) {
-                        if (!Scalar.getScalars()
+                        if (!CoraScalar.getScalars()
                                 .contains(((ListType) fieldDefinition.getType()).getType().toString())) {
                             children.add(((TypeName) ((ListType) fieldDefinition.getType()).getType()).getName());
                         }
@@ -94,8 +93,8 @@ public class GraphNode {
             });
         }
 
-        public GraphNode build() {
-            return new GraphNode(name, definition, typeMap, children);
+        public CoraNode build() {
+            return new CoraNode(name, definition, typeMap, children);
         }
 
         public String getName() {

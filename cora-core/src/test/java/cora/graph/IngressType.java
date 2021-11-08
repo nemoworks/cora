@@ -1,12 +1,12 @@
 package cora.graph;
 
-public enum RootType {
+public enum IngressType {
     QUERY("查询", 1), MUTATION("修改", 2);
 
     private String name;
     private Integer index;
 
-    RootType(String name, Integer index) {
+    IngressType(String name, Integer index) {
         this.name = name;
         this.index = index;
     }

@@ -1,16 +1,16 @@
 package cora.graph;
 
-public class GraphRoot {
+public class CoraIngress {
     private String id;
     private String name;
-    private RootType rootType;
+    private IngressType rootType;
     private String graphNodeName;
 
     public static final class Builder {
         protected Builder(String nodeName) {
         }
 
-        public GraphRoot build() {
+        public CoraIngress build() {
             return null;
         }
     }
