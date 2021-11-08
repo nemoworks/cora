@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import cora.graph.CoraNode;
 import graphql.language.FieldDefinition;
 import graphql.language.InputValueDefinition;
 import graphql.language.ObjectTypeDefinition;
@@ -18,16 +15,14 @@ import graphql.language.Type;
 import graphql.language.TypeName;
 import graphql.schema.idl.TypeDefinitionRegistry;
 
-@Component
-public class GraphTypeRegistry {
+public class CoraTypeRegistry {
     private final TypeDefinitionRegistry typeDefinitionRegistry;
 
     public static Map<String, Map<String, Type>> typeDefinitionsMap = new HashMap<>();
 
     private final List<FieldDefinition> fieldDefinitionListInQuery = new ArrayList<>();
 
-    @Autowired
-    private GraphTypeRegistry() {
+    private CoraTypeRegistry() {
         this.typeDefinitionRegistry = new TypeDefinitionRegistry();
     }
 
@@ -52,7 +47,7 @@ public class GraphTypeRegistry {
         typeDefinitionRegistry.add(query);
     }
 
-    public void addGraphNode(GraphNode graphNode){
+    public void addGraphNode(CoraNode graphNode){
         if (!typeDefinitionsMap.keySet().contains(graphNode.getName())) {
 
             typeDefinitionsMap.put(graphNode.getName(),graphNode.getTypeMap());

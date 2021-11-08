@@ -8,6 +8,8 @@ plugins {
 
 dependencies {
     implementation 'org.apache.commons:commons-text'
+    implementation 'org.springframework:spring-context:5.3.12'
+    
     implementation project(':cora-core')
 }
 
