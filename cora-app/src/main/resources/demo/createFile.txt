@@ -1,0 +1,65 @@
+//构造销售人员
+{
+ create_salesMan(data:{
+    name:"陆珺"
+ }){
+    name
+ }
+}
+{
+ create_salesMan(data:{
+    name:"阮枫林"
+ }){
+    name
+ }
+}
+
+//构造保证金
+{
+  create_deposit(data:{
+    saler:"61877718239675353a49faef",
+    amount:1000000,
+    payDate:"11月7号",
+    project:"解释性",
+    appendix:"无",
+    customer:"tc",
+    applyDate:"11月7号",
+    payCompany:"杰世欣",
+    recvCompany:"其他"
+  }){
+    amount
+    payDate
+  }
+}
+{
+  create_deposit(data:{
+    saler:"6187772c239675353a49faf0",
+    amount:2000001,
+    payDate:"11月6号",
+    project:"AMDYES",
+    appendix:"无",
+    customer:"chris",
+    applyDate:"11月7号",
+    payCompany:"xiaomi",
+    recvCompany:"其他"
+  }){
+    amount
+    payDate
+  }
+}
+
+//构造毛利
+{
+  create_grossProfit(data:{
+    fee:"利润",
+    cash:"是",
+    month:"11",
+    amount:10000000,
+    salers:["61877718239675353a49faef","6187772c239675353a49faf0"],
+    appendix:"无",
+    type:"无"
+  }){
+    fee
+    cash
+  }
+}

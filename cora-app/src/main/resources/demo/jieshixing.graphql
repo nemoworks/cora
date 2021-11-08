@@ -1,0 +1,28 @@
+"毛利"
+type GrossProfit{
+    fee:String
+    cash:String
+    month:String
+    amount:Int
+    salers:[SalesMan]
+    type:String
+    appendix:String
+}
+
+"销售人员"
+type SalesMan{
+    name:String
+}
+
+"保证金"
+type Deposit{
+    saler:SalesMan
+    amount:Int
+    payDate:String
+    project:String
+    appendix:String
+    customer:String
+    applyDate:String
+    payCompany:String
+    recvCompany:String
+}
