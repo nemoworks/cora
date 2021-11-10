@@ -9,7 +9,7 @@ plugins {
 
 dependencies{
     implementation 'com.graphql-java:graphql-java:17.3'
-//    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.apache.velocity:velocity:1.7'
     implementation 'com.alibaba:fastjson:1.2.75'
     implementation 'org.springframework.data:spring-data-mongodb:2.2.5.RELEASE'

@@ -1,5 +1,8 @@
 package cora.app;
 
+import cora.datafetcher.CoraNodeInstanceConstructor;
+import cora.datafetcher.CoraNodeInstanceFetcher;
+import cora.datafetcher.CoraNodeInstanceListFetcher;
 import cora.datafetcher.mongodb.MongodbNodeInstanceConstructor;
 import cora.datafetcher.mongodb.MongodbNodeInstanceFetcher;
 import cora.datafetcher.mongodb.MongodbNodeInstanceListFetcher;
@@ -34,10 +37,25 @@ public class Config {
     }
 
     @Bean
+    public CoraNodeInstanceConstructor coraNodeInstanceConstructor(){
+        return new CoraNodeInstanceConstructor(mongodbNodeInstanceConstructor());
+    }
+
+    @Bean
+    public CoraNodeInstanceListFetcher coraNodeInstanceListFetcher(){
+        return new CoraNodeInstanceListFetcher(mongodbNodeInstanceListFetcher());
+    }
+
+    @Bean
+    public CoraNodeInstanceFetcher coraNodeInstanceFetcher(){
+        return new CoraNodeInstanceFetcher(mongodbNodeInstanceFetcher());
+    }
+
+    @Bean
     public CoraRuntimeWiring coraRuntimeWiring(){
-        return new CoraRuntimeWiring(mongodbNodeInstanceFetcher()
-                ,mongodbNodeInstanceListFetcher()
-                ,mongodbNodeInstanceConstructor());
+        return new CoraRuntimeWiring(coraNodeInstanceFetcher()
+                ,coraNodeInstanceListFetcher()
+                ,coraNodeInstanceConstructor());
     }
 
     @Bean
