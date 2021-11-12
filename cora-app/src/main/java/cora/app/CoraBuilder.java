@@ -37,11 +37,11 @@ public class CoraBuilder {
 
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
 
-    public GraphQL createGraphQL(){
+    public GraphQL createGraphQL() {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
         List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, "graphNode");
-        coraNodes.forEach(coraNode->{
+        coraNodes.forEach(coraNode -> {
             String schema = coraNode.getString("schemaDefinition");
             List<Definition> parse = coraParser.parseSchema(schema);
             CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
@@ -51,15 +51,15 @@ public class CoraBuilder {
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
-        return  newGraphQL(graphQLSchema).build();
+        return newGraphQL(graphQLSchema).build();
     }
 
-    private void addNewTypeAndDataFetcherInGraphQL(CoraNode coraNode){
+    private void addNewTypeAndDataFetcherInGraphQL(CoraNode coraNode) {
         coraTypeRegistry.addGraphNode(coraNode);
         coraRuntimeWiring.addNewSchemaDataFetcher(coraNode);
     }
 
-    public GraphQL addTypeInGraphQL(String schema){
+    public GraphQL addTypeInGraphQL(String schema) {
         List<Definition> parse = coraParser.parseSchema(schema);
         //GraphInstance.merge(parse);
         this.addTypeInDB(schema);
@@ -68,12 +68,12 @@ public class CoraBuilder {
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
-        return  newGraphQL(graphQLSchema).build();
+        return newGraphQL(graphQLSchema).build();
     }
 
-    private void addTypeInDB(String schema){
+    private void addTypeInDB(String schema) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("schemaDefinition",schema);
-        mongoTemplate.insert(jsonObject,"graphNode");
+        jsonObject.put("schemaDefinition", schema);
+        mongoTemplate.insert(jsonObject, "graphNode");
     }
 }

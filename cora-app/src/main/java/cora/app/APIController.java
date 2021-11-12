@@ -23,28 +23,28 @@ public class APIController {
     private final CoraBuilder coraBuilder;
 
     @Autowired
-    public APIController(CoraBuilder coraBuilder){
+    public APIController(CoraBuilder coraBuilder) {
         this.coraBuilder = coraBuilder;
         this.graphQL = coraBuilder.createGraphQL();
     }
 
     @PostMapping(value = "/graphql")
-    public ResponseEntity query(@RequestBody String query){
-        JSONObject jsonObject = JSON.parseObject(query,JSONObject.class);
+    public ResponseEntity query(@RequestBody String query) {
+        JSONObject jsonObject = JSON.parseObject(query, JSONObject.class);
         String schema = jsonObject.getString("query");
-        if(schema.startsWith("type")){
+        if (schema.startsWith("type")) {
             this.graphQL = coraBuilder.addTypeInGraphQL(schema);
             return ResponseEntity.ok(CoraNodeAPITemplate.build(schema));
-        }else if(schema.startsWith("create")){
+        } else if (schema.startsWith("create")) {
             return ResponseEntity.ok("waiting...");
-        }else{
+        } else {
             Parser parser = new Parser();
             Document document = parser.parseDocument(schema);
-            if(document.getDefinitions().get(0) instanceof OperationDefinition){
+            if (document.getDefinitions().get(0) instanceof OperationDefinition) {
                 ((OperationDefinition) document.getDefinitions().get(0)).getOperation().name();
             }
             ExecutionResult result = graphQL.execute(schema);
-            if(result.getErrors().isEmpty())
+            if (result.getErrors().isEmpty())
                 return ResponseEntity.ok(result.getData());
             return ResponseEntity.badRequest().body(result.getErrors());
         }
