@@ -1,0 +1,15 @@
+type User {
+    id: String
+    name: String
+    age: Int
+    nationality: String
+    createdAt: String
+    friends: [User]
+    articles: [Article]
+}
+
+type Article {
+    id: String
+    title: String
+    minutesRead: Int
+}

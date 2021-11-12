@@ -1,0 +1,13 @@
+{
+  "schemaInfo": {
+    "name": "${name}",
+    "version":"${version}",
+    "creator": "${creator}"
+  },
+  "apis": {
+    "query": "${schema}:(id:String){...}",
+    "create": "${createSchema}:(data){...}",
+    "update": "${updateSchema}:(data){...}",
+    "delete": "${deleteSchema}:(id:String){...}"
+  }
+}
