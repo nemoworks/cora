@@ -23,49 +23,49 @@ public class Config {
     MongoTemplate mongoTemplate;
 
     @Bean
-    public MongodbNodeInstanceConstructor mongodbNodeInstanceConstructor(){
+    public MongodbNodeInstanceConstructor mongodbNodeInstanceConstructor() {
         return new MongodbNodeInstanceConstructor(mongoTemplate);
     }
 
     @Bean
-    public MongodbNodeInstanceFetcher mongodbNodeInstanceFetcher(){
+    public MongodbNodeInstanceFetcher mongodbNodeInstanceFetcher() {
         return new MongodbNodeInstanceFetcher(mongoTemplate);
     }
 
     @Bean
-    public MongodbNodeInstanceListFetcher mongodbNodeInstanceListFetcher(){
+    public MongodbNodeInstanceListFetcher mongodbNodeInstanceListFetcher() {
         return new MongodbNodeInstanceListFetcher(mongoTemplate);
     }
 
     @Bean
-    public CoraNodeInstanceConstructor coraNodeInstanceConstructor(){
+    public CoraNodeInstanceConstructor coraNodeInstanceConstructor() {
         return new CoraNodeInstanceConstructor(mongodbNodeInstanceConstructor());
     }
 
     @Bean
-    public CoraNodeInstanceListFetcher coraNodeInstanceListFetcher(){
+    public CoraNodeInstanceListFetcher coraNodeInstanceListFetcher() {
         return new CoraNodeInstanceListFetcher(mongodbNodeInstanceListFetcher());
     }
 
     @Bean
-    public CoraNodeInstanceFetcher coraNodeInstanceFetcher(){
+    public CoraNodeInstanceFetcher coraNodeInstanceFetcher() {
         return new CoraNodeInstanceFetcher(mongodbNodeInstanceFetcher());
     }
 
     @Bean
-    public CoraRuntimeWiring coraRuntimeWiring(){
+    public CoraRuntimeWiring coraRuntimeWiring() {
         return new CoraRuntimeWiring(coraNodeInstanceFetcher()
-                ,coraNodeInstanceListFetcher()
-                ,coraNodeInstanceConstructor());
+                , coraNodeInstanceListFetcher()
+                , coraNodeInstanceConstructor());
     }
 
     @Bean
-    public CoraTypeRegistry coraTypeRegistry(){
+    public CoraTypeRegistry coraTypeRegistry() {
         return new CoraTypeRegistry();
     }
 
     @Bean
-    public CoraParser coraParser(){
+    public CoraParser coraParser() {
         return new JsonSchemaParser();
     }
 }
