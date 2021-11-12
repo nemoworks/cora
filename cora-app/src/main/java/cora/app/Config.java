@@ -7,6 +7,7 @@ import cora.datafetcher.mongodb.MongodbNodeInstanceConstructor;
 import cora.datafetcher.mongodb.MongodbNodeInstanceFetcher;
 import cora.datafetcher.mongodb.MongodbNodeInstanceListFetcher;
 import cora.parser.CoraParser;
+import cora.parser.JsonSchemaParser;
 import cora.parser.SDLParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
@@ -65,6 +66,6 @@ public class Config {
 
     @Bean
     public CoraParser coraParser(){
-        return new SDLParser();
+        return new JsonSchemaParser();
     }
 }
