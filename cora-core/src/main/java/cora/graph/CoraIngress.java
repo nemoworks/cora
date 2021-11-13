@@ -7,11 +7,11 @@ public class CoraIngress {
     private String coraNodeName;
 
 
-    public static final class Builder{
-        protected Builder(String nodeName){
+    public static final class Builder {
+        protected Builder(String nodeName) {
         }
 
-        public CoraIngress build(){
+        public CoraIngress build() {
             return null;
         }
     }

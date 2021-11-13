@@ -18,8 +18,8 @@ public class CoraNodeInstanceListFetcher implements DataFetcher<List<JSONObject>
 
     @Override
     public List<JSONObject> get(DataFetchingEnvironment dataFetchingEnvironment) throws Exception {
-        String fieldType = ((GraphQLObjectType)((GraphQLList) dataFetchingEnvironment.getFieldType()).getWrappedType()).getName();
-        if(dataFetchingEnvironment.getSource()!=null){
+        String fieldType = ((GraphQLObjectType) ((GraphQLList) dataFetchingEnvironment.getFieldType()).getWrappedType()).getName();
+        if (dataFetchingEnvironment.getSource() != null) {
             String name = dataFetchingEnvironment.getFieldDefinition().getName();
             JSONObject source = dataFetchingEnvironment.getSource();
             ArrayList<String> ids = source.getObject(name, ArrayList.class);

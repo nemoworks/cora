@@ -1,33 +1,23 @@
 package cora.parser;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
-import cora.antlr.json.JSONLexer;
-import cora.antlr.json.JSONParser;
 import graphql.language.Definition;
 import graphql.language.FieldDefinition;
 import graphql.language.ObjectTypeDefinition;
 import graphql.language.TypeName;
-import graphql.parser.MultiSourceReader;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 
-public class JsonSchemaParser implements CoraParser{
+public class JsonSchemaParser implements CoraParser {
     private static final Gson parser = new Gson();
 
     @Override
@@ -47,7 +37,8 @@ public class JsonSchemaParser implements CoraParser{
     private static boolean isJsonValid(final JsonReader jsonReader) throws IOException {
         try {
             JsonToken token;
-            loop: while ((token = jsonReader.peek()) != END_DOCUMENT && token != null) {
+            loop:
+            while ((token = jsonReader.peek()) != END_DOCUMENT && token != null) {
                 switch (token) {
                     case BEGIN_ARRAY:
                         jsonReader.beginArray();
@@ -84,23 +75,23 @@ public class JsonSchemaParser implements CoraParser{
 
     public List<Definition> parseSchema(String schema) {
         //JsonObject json = parser.fromJson(schema, JsonObject.class);
-        JSONAST parsedAST = this.parse(schema);
+        JsonAST parsedAST = this.parse(schema);
         return parse(parsedAST);
     }
 
-    public JSONAST parse(String schema){
-        return JSONAST.parseJSON(schema);
+    public JsonAST parse(String schema) {
+        return JsonAST.parseJSON(schema);
     }
 
-    public List<Definition> parse(JSONAST jsonast){
+    public List<Definition> parse(JsonAST jsonast) {
         List<Definition> definitions = new ArrayList<>();
-        JSONAST properties = jsonast.getJSONAST("properties");
+        JsonAST properties = jsonast.getJSONAST("properties");
         String name = jsonast.getString("title");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
-        if(properties != null){
-            properties.getMap().keySet().forEach(key->{
-                JSONAST propertiesJSONAST = properties.getJSONAST(key);
+        if (properties != null) {
+            properties.getMap().keySet().forEach(key -> {
+                JsonAST propertiesJSONAST = properties.getJSONAST(key);
                 JsonSchemaType type = JsonSchemaType.valueOf(propertiesJSONAST.getString("type"));
                 switch (type) {
                     case string:

@@ -13,6 +13,7 @@ import java.util.Properties;
 public class CoraNodeAPITemplate {
 
     private static final Properties props = new Properties();
+
     static {
         props.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
         props.setProperty(Velocity.RESOURCE_LOADER, "class");
@@ -22,9 +23,9 @@ public class CoraNodeAPITemplate {
 
     private static final VelocityEngine velocityEngine = new VelocityEngine(props);
 
-    public static JSONObject build(String schema){
+    public static JSONObject build(String schema) {
         int loc = schema.indexOf('{');
-        String schemaType = schema.substring(5,loc);
+        String schemaType = schema.substring(5, loc);
         String template = "{\n" +
                 "  \"schemaInfo\": {\n" +
                 "    \"name\": \"${name}\",\n" +
@@ -39,9 +40,9 @@ public class CoraNodeAPITemplate {
                 "  }\n" +
                 "}";
         VelocityContext context = new VelocityContext();
-        context.put("schema",schemaType.toLowerCase());
-        context.put("createSchema","create"+schemaType);
-        context.put("name",schemaType);
+        context.put("schema", schemaType.toLowerCase());
+        context.put("createSchema", "create" + schemaType);
+        context.put("name", schemaType);
         StringWriter writer = new StringWriter();
         velocityEngine.evaluate(context, writer, "", template);
         return JSON.parseObject(writer.toString(), JSONObject.class);

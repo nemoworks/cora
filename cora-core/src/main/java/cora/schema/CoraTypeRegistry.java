@@ -33,19 +33,19 @@ public class CoraTypeRegistry {
         typeDefinitionRegistry.add(schemaDefinition);
     }
 
-    public void buildTypeRegistry(){
+    public void buildTypeRegistry() {
         typeDefinitionRegistry.getType("Query").ifPresent(typeDefinition -> {
-            if(typeDefinition instanceof ObjectTypeDefinition)
+            if (typeDefinition instanceof ObjectTypeDefinition)
                 typeDefinitionRegistry.remove(typeDefinition);
         });
         ObjectTypeDefinition query = ObjectTypeDefinition.newObjectTypeDefinition().name("Query").fieldDefinitions(fieldDefinitionListInQuery).build();
         typeDefinitionRegistry.add(query);
     }
 
-    public void addGraphNode(CoraNode coraNode){
+    public void addGraphNode(CoraNode coraNode) {
         if (!typeDefinitionsMap.keySet().contains(coraNode.getName())) {
 
-            typeDefinitionsMap.put(coraNode.getName(),coraNode.getTypeMap());
+            typeDefinitionsMap.put(coraNode.getName(), coraNode.getTypeMap());
 
             this.addTypeDefinition(coraNode.getName(), coraNode.getTypeMap());
 
@@ -53,27 +53,27 @@ public class CoraTypeRegistry {
 
             this.addDocumentListTypeInQuery(coraNode.getName());
 
-            this.addCreateNodeInstanceInQuery(coraNode.getName(),coraNode.getInputTypeMap());
+            this.addCreateNodeInstanceInQuery(coraNode.getName(), coraNode.getInputTypeMap());
 
         }
     }
 
     //在GraphQL的Schema中的Query类中增加一个访问定义的对象的字段
-    private void addDocumentTypeInQuery(String name){
+    private void addDocumentTypeInQuery(String name) {
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
-        inputValueDefinitions.add(new InputValueDefinition("id",new TypeName("String")));
+        inputValueDefinitions.add(new InputValueDefinition("id", new TypeName("String")));
         //orderDocument(id:String):OrderDocument
         this.addFieldDefinitionsInQueryType(GQLTemplate.querySingleInstance(name)
-                ,new TypeName(name)
-                ,inputValueDefinitions);
+                , new TypeName(name)
+                , inputValueDefinitions);
     }
 
-    private void addDocumentListTypeInQuery(String name){
-        this.addFieldDefinitionsInQueryType(GQLTemplate.queryInstanceList(name),new ListType(new TypeName(name)),
+    private void addDocumentListTypeInQuery(String name) {
+        this.addFieldDefinitionsInQueryType(GQLTemplate.queryInstanceList(name), new ListType(new TypeName(name)),
                 new ArrayList<>());
     }
 
-    private void addCreateNodeInstanceInQuery(String name,Map<String,Type> typeMap){
+    private void addCreateNodeInstanceInQuery(String name, Map<String, Type> typeMap) {
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
         typeMap.forEach((key, value) -> inputValueDefinitions.add(new InputValueDefinition(key, value)));
         InputObjectTypeDefinition inputObjectTypeDefinition = InputObjectTypeDefinition.newInputObjectDefinition()
@@ -82,11 +82,11 @@ public class CoraTypeRegistry {
         typeDefinitionRegistry.add(inputObjectTypeDefinition);
 
         List<InputValueDefinition> inputValueDefinition = new ArrayList<>();
-        inputValueDefinition.add(new InputValueDefinition("data",new TypeName(GQLTemplate.inputTypeForNodeInstance(name))));
+        inputValueDefinition.add(new InputValueDefinition("data", new TypeName(GQLTemplate.inputTypeForNodeInstance(name))));
 
         this.addFieldDefinitionsInQueryType(GQLTemplate.createNodeInstance(name)
-                ,new TypeName(name)
-                ,inputValueDefinition);
+                , new TypeName(name)
+                , inputValueDefinition);
     }
 
 

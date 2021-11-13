@@ -16,14 +16,14 @@ public class CoraNodeInstanceFetcher implements DataFetcher<JSONObject> {
 
     @Override
     public JSONObject get(DataFetchingEnvironment dataFetchingEnvironment) throws Exception {
-        if(dataFetchingEnvironment.getSource()!=null){
+        if (dataFetchingEnvironment.getSource() != null) {
             String name = dataFetchingEnvironment.getFieldDefinition().getName();
             JSONObject source = dataFetchingEnvironment.getSource();
             ArrayList<String> ids = source.getObject(name, ArrayList.class);
-            return nodeInstanceFetcher.queryNodeInstanceById(ids.get(0),null);
+            return nodeInstanceFetcher.queryNodeInstanceById(ids.get(0), null);
         }
         String id = dataFetchingEnvironment.getArgument("id");
         String fieldType = ((GraphQLObjectType) dataFetchingEnvironment.getFieldType()).getName();
-        return nodeInstanceFetcher.queryNodeInstanceById(id,fieldType);
+        return nodeInstanceFetcher.queryNodeInstanceById(id, fieldType);
     }
 }

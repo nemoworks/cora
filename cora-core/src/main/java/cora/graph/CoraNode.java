@@ -16,9 +16,9 @@ public class CoraNode {
 
     private Map<String, Type> typeMap;
 
-    private Map<String,Type> inputTypeMap;
+    private Map<String, Type> inputTypeMap;
 
-    private Map<String,Type> linkedTypeMap;
+    private Map<String, Type> linkedTypeMap;
 
     private List<String> children;
 
@@ -90,42 +90,41 @@ public class CoraNode {
         this.children = children;
     }
 
-    public static final class Builder{
+    public static final class Builder {
         private String name;
         private Definition definition;
         private Map<String, Type> typeMap = new HashMap<>();
 
-        private Map<String,Type> inputTypeMap = new HashMap<>();
+        private Map<String, Type> inputTypeMap = new HashMap<>();
 
-        private Map<String,Type> linkedTypeMap = new HashMap<>();
+        private Map<String, Type> linkedTypeMap = new HashMap<>();
 
         private List<String> children = new ArrayList<>();
 
-        public Builder(ObjectTypeDefinition definition){
+        public Builder(ObjectTypeDefinition definition) {
             this.name = definition.getName();
             this.definition = definition;
             definition.getFieldDefinitions().forEach(fieldDefinition -> {
-                typeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
-                if(fieldDefinition.getType() instanceof ListType) {
+                typeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
+                if (fieldDefinition.getType() instanceof ListType) {
                     if (!CoraScalar.getScalars().contains(((TypeName) ((ListType) fieldDefinition.getType()).getType()).getName())) {
                         String typeName = ((TypeName) ((ListType) fieldDefinition.getType()).getType()).getName();
                         children.add(typeName);
                         //inputTypeMap.put(fieldDefinition.getName(),new ListType(new TypeName(GQLTemplate.inputTypeForNodeInstance(typeName))));
-                        inputTypeMap.put(fieldDefinition.getName(),new ListType(new TypeName("String")));
-                        linkedTypeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
-                    }else{
-                        inputTypeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
+                        inputTypeMap.put(fieldDefinition.getName(), new ListType(new TypeName("String")));
+                        linkedTypeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
+                    } else {
+                        inputTypeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
                         //inputTypeMap.put(fieldDefinition.getName(),new TypeName("String"));
                     }
-                }
-                else{
-                    if(!CoraScalar.getScalars().contains(((TypeName) fieldDefinition.getType()).getName())){
-                        children.add(((TypeName)fieldDefinition.getType()).getName());
+                } else {
+                    if (!CoraScalar.getScalars().contains(((TypeName) fieldDefinition.getType()).getName())) {
+                        children.add(((TypeName) fieldDefinition.getType()).getName());
                         //inputTypeMap.put(fieldDefinition.getName(),new TypeName(GQLTemplate.inputTypeForNodeInstance(((TypeName) fieldDefinition.getType()).getName())));
-                        inputTypeMap.put(fieldDefinition.getName(),new ListType(new TypeName("String")));
-                        linkedTypeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
-                    }else{
-                        inputTypeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
+                        inputTypeMap.put(fieldDefinition.getName(), new ListType(new TypeName("String")));
+                        linkedTypeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
+                    } else {
+                        inputTypeMap.put(fieldDefinition.getName(), fieldDefinition.getType());
                         //inputTypeMap.put(fieldDefinition.getName(),new TypeName("String"));
                     }
                 }
@@ -133,8 +132,8 @@ public class CoraNode {
             });
         }
 
-        public CoraNode build(){
-            return new CoraNode(name,definition,typeMap, inputTypeMap, linkedTypeMap, children);
+        public CoraNode build() {
+            return new CoraNode(name, definition, typeMap, inputTypeMap, linkedTypeMap, children);
         }
 
         public String getName() {

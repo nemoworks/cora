@@ -1,9 +1,10 @@
 package cora.datafetcher;
 
 public class DeleteResponse {
-    public enum ResultType{
-        succeed,failed
+    public enum ResultType {
+        succeed, failed
     }
+
     private ResultType resultType;
     private String comments;
 

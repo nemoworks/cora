@@ -17,6 +17,6 @@ public class CoraNodeInstanceConstructor implements DataFetcher<JSONObject> {
     public JSONObject get(DataFetchingEnvironment environment) throws Exception {
         JSONObject content = new JSONObject(environment.getArgument("data"));
         String fieldType = ((GraphQLObjectType) environment.getFieldType()).getName();
-        return nodeInstanceConstructor.createNodeInstance(fieldType,content);
+        return nodeInstanceConstructor.createNodeInstance(fieldType, content);
     }
 }
