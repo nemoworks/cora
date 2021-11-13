@@ -40,6 +40,16 @@ public class CoraBuilder {
     public GraphQL createGraphQL() {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
+        String s = "{\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"title\": \"Saler\",\n" +
+                "    \"properties\": {\n" +
+                "      \"name\": {\n" +
+                "      \"type\": \"string\",\n" +
+                "      \"title\": \"姓名\"\n" +
+                "      }\n" +
+                "    }";
+        this.addTypeInDB(s);
         List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, "graphNode");
         coraNodes.forEach(coraNode -> {
             String schema = coraNode.getString("schemaDefinition");

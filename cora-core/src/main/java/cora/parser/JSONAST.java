@@ -1,6 +1,5 @@
 package cora.parser;
 
-import com.alibaba.fastjson.JSONArray;
 import cora.antlr.json.JSONLexer;
 import cora.antlr.json.JSONParser;
 import org.antlr.v4.runtime.CharStreams;
@@ -23,7 +22,6 @@ public class JSONAST {
             String key = pairCtx.STRING().getText();
             map.put(key.substring(1, key.length()-1), pairCtx.value());
         }
-
     }
 
     public JSONAST getJSONAST(String key) {
@@ -81,14 +79,6 @@ public class JSONAST {
         JSONParser parser = new JSONParser(tokens);
         JSONParser.ObjContext objCtx = parser.obj();
         return new JSONAST(objCtx);
-    }
-
-    public static JSONArray parseArray(String text) {
-        if (text == null) {
-            return null;
-        }
-        JSONArray array = JSONArray.parseArray(text);
-        return array;
     }
 
 

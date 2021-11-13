@@ -1,0 +1,123 @@
+{
+  "salesman": {
+    "type": "object",
+    "title": "Saler",
+    "properties": {
+      "name": {
+      "type": "string",
+      "title": "姓名"
+      }
+    }
+  },
+  "bill": {
+    "type": "object",
+    "title": "Bill",
+    "$defs": {
+      "saler": {
+        "type": "string",
+        "title": "Saler",
+        "key": "name",
+        "source": "http://localhost:3000/salers"
+      }
+    },
+    "properties": {
+      "invoiceCompany": {
+        "type": "string",
+        "title": "公司名"
+      },
+      "invoiceDate": {
+        "type": "string",
+        "title": "日期"
+      },
+      "saler": {
+        "$ref": "#/$defs/saler"
+      },
+      "arriveDate": {
+        "type": "string",
+        "title": "日期"
+      },
+      "isPaybackEnd": {
+        "type": "string",
+        "title": "是"
+      }
+    }
+  },
+  "deposit": {
+    "type": "object",
+    "title": "Deposit",
+    "properties": {
+      "saler": {
+        "type": "link",
+        "linkTo": "SalesMan",
+        "title": "销售人员"
+      },
+      "amount": {
+        "type": "number",
+        "title": "金额"
+      },
+      "payDate": {
+        "type": "string",
+        "title": "预计收回时间"
+      },
+      "project": {
+        "type": "string",
+        "title": "项目名称"
+      },
+      "appendix": {
+        "type": "string",
+        "title": "备注"
+      },
+      "customer": {
+        "type": "string",
+        "title": "客户"
+      },
+      "applyDate": {
+        "type": "string",
+        "title": "申请时间"
+      },
+      "payCompany": {
+        "type": "string",
+        "title": "付款单位"
+      },
+      "recvCompany": {
+        "type": "string",
+        "title": "收款单位"
+      }
+    }
+  },
+
+  "grossProfit": {
+    "type": "object",
+    "title": "GrossProfit",
+    "properties": {
+      "salers": {
+        "type": "links",
+        "linkTo": "SalesMan",
+        "title": "销售人员"
+      },
+      "fee": {
+        "type": "string",
+        "title": "项目"
+      },
+      "cash": {
+        "type": "string",
+        "title": "预存"
+      },
+      "mouth": {
+        "type": "string",
+        "title": "月份"
+      },
+      "amount": {
+        "type": "number",
+        "title": "金额"
+      },
+      "appendix": {
+        "type": "string",
+        "title": "备注"
+      }
+    }
+  }
+}
+
+
+
