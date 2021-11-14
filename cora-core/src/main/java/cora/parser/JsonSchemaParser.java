@@ -97,6 +97,7 @@ public class JsonSchemaParser implements CoraParser{
         JSONAST defs = jsonast.getJSONAST("$defs");
         String name = jsonast.getString("title");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
+
         //defMap
         Map<String,Type> defMap = new HashMap<>();
         if(defs!=null){
@@ -113,9 +114,19 @@ public class JsonSchemaParser implements CoraParser{
                 JSONAST propertiesJSONAST = properties.getJSONAST(key);
                 if(propertiesJSONAST.getString("type") == null){
                     String s = propertiesJSONAST.getString("$ref");
-                    String substring = s.substring(s.lastIndexOf('/'));
+                    String substring = s.substring(s.lastIndexOf('/')+1);
                     if(defMap.get(substring)!=null){
-                        fieldDefinitions.add(new FieldDefinition(substring,defMap.get(substring)));
+                        fieldDefinitions.add(new FieldDefinition(key,defMap.get(substring)));
+                    }
+                }else if(propertiesJSONAST.getString("type").equals("array")){
+                    String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
+                    if(s!=null){
+                        String substring = s.substring(s.lastIndexOf('/')+1);
+                        if(defMap.get(substring)!=null){
+                            fieldDefinitions.add(new FieldDefinition(key,new ListType(defMap.get(substring))));
+                        }
+                    }else{
+                        fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName("String"))));
                     }
                 }else{
                     JsonSchemaType type = JsonSchemaType.valueOf(propertiesJSONAST.getString("type"));
@@ -146,34 +157,26 @@ public class JsonSchemaParser implements CoraParser{
     public static void main(String[] args) {
         String s = "{\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"title\": \"Bill\",\n" +
+                "    \"title\": \"Payback\",\n" +
                 "    \"$defs\": {\n" +
-                "      \"saler\": {\n" +
-                "        \"type\": \"string\",\n" +
-                "        \"title\": \"Saler\",\n" +
-                "        \"key\": \"name\",\n" +
-                "        \"source\": \"http://localhost:3000/salers\"\n" +
+                "      \"bill\": {\n" +
+                "        \"title\":\"Bill\",\n" +
+                "        \"type\":\"string\",\n" +
+                "        \"key\": \"id\",\n" +
+                "        \"source\": \"http://localhost:3000/bills\"\n" +
                 "      }\n" +
                 "    },\n" +
                 "    \"properties\": {\n" +
-                "      \"invoiceCompany\": {\n" +
-                "        \"type\": \"string\",\n" +
-                "        \"title\": \"公司名\"\n" +
+                "      \"billId\":{\n" +
+                "        \"$ref\":\"#/$defs/bill\"\n" +
                 "      },\n" +
-                "      \"invoiceDate\": {\n" +
-                "        \"type\": \"string\",\n" +
-                "        \"title\": \"日期\"\n" +
+                "      \"date\":{\n" +
+                "        \"type\":\"string\",\n" +
+                "        \"title\":\"时间\"\n" +
                 "      },\n" +
-                "      \"saler\": {\n" +
-                "        \"$ref\": \"#/$defs/saler\"\n" +
-                "      },\n" +
-                "      \"arriveDate\": {\n" +
-                "        \"type\": \"string\",\n" +
-                "        \"title\": \"日期\"\n" +
-                "      },\n" +
-                "      \"isPaybackEnd\": {\n" +
-                "        \"type\": \"string\",\n" +
-                "        \"title\": \"是\"\n" +
+                "      \"amount\":{\n" +
+                "        \"title\":\"金额\",\n" +
+                "        \"type\":\"string\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }";
