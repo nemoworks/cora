@@ -17,7 +17,7 @@
 //构造保证金
 {
   create_deposit(data:{
-    saler:"61877718239675353a49faef",
+    saler:"61888d3e61602f6f22c6ff0e",
     amount:1000000,
     payDate:"11月7号",
     project:"解释性",
@@ -33,7 +33,7 @@
 }
 {
   create_deposit(data:{
-    saler:"6187772c239675353a49faf0",
+    saler:"61888d4661602f6f22c6ff0f",
     amount:2000001,
     payDate:"11月6号",
     project:"AMDYES",
@@ -55,7 +55,7 @@
     cash:"是",
     month:"11",
     amount:10000000,
-    salers:["61877718239675353a49faef","6187772c239675353a49faf0"],
+    salers:["61888d3e61602f6f22c6ff0e","61888d4661602f6f22c6ff0f"],
     appendix:"无",
     type:"无"
   }){

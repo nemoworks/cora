@@ -8,15 +8,13 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
 import cora.antlr.json.JSONLexer;
 import cora.antlr.json.JSONParser;
-import graphql.language.Definition;
-import graphql.language.FieldDefinition;
-import graphql.language.ObjectTypeDefinition;
-import graphql.language.TypeName;
+import graphql.language.*;
 import graphql.parser.MultiSourceReader;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -24,6 +22,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 
@@ -95,25 +94,58 @@ public class JsonSchemaParser implements CoraParser{
     public List<Definition> parse(JSONAST jsonast){
         List<Definition> definitions = new ArrayList<>();
         JSONAST properties = jsonast.getJSONAST("properties");
+        JSONAST defs = jsonast.getJSONAST("$defs");
         String name = jsonast.getString("title");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
+
+        //defMap
+        Map<String,Type> defMap = new HashMap<>();
+        if(defs!=null){
+            defs.getMap().keySet().forEach(def->{
+                JSONAST defType = defs.getJSONAST(def);
+                String type = defType.getString("title");
+                defMap.put(def,new TypeName(defType.getString("title")));
+            });
+        }
+        //properties
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
         if(properties != null){
             properties.getMap().keySet().forEach(key->{
                 JSONAST propertiesJSONAST = properties.getJSONAST(key);
-                JsonSchemaType type = JsonSchemaType.valueOf(propertiesJSONAST.getString("type"));
-                switch (type) {
-                    case string:
-                        fieldDefinitions.add(new FieldDefinition(key, new TypeName("String")));
-                        break;
-                    case number:
-                        fieldDefinitions.add(new FieldDefinition(key, new TypeName("Int")));
-                        break;
-                    case link:
-                        fieldDefinitions.add(new FieldDefinition(key, new TypeName(propertiesJSONAST.getString("linkTo"))));
-                        break;
-                    default:
-                        break;
+                if(propertiesJSONAST.getString("type") == null){
+                    String s = propertiesJSONAST.getString("$ref");
+                    String substring = s.substring(s.lastIndexOf('/')+1);
+                    if(defMap.get(substring)!=null){
+                        fieldDefinitions.add(new FieldDefinition(key,defMap.get(substring)));
+                    }
+                }else if(propertiesJSONAST.getString("type").equals("array")){
+                    String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
+                    if(s!=null){
+                        String substring = s.substring(s.lastIndexOf('/')+1);
+                        if(defMap.get(substring)!=null){
+                            fieldDefinitions.add(new FieldDefinition(key,new ListType(defMap.get(substring))));
+                        }
+                    }else{
+                        fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName("String"))));
+                    }
+                }else{
+                    JsonSchemaType type = JsonSchemaType.valueOf(propertiesJSONAST.getString("type"));
+                    switch (type) {
+                        case string:
+                            fieldDefinitions.add(new FieldDefinition(key, new TypeName("String")));
+                            break;
+                        case number:
+                            fieldDefinitions.add(new FieldDefinition(key, new TypeName("Int")));
+                            break;
+                        case link:
+                            fieldDefinitions.add(new FieldDefinition(key, new TypeName(propertiesJSONAST.getString("linkTo"))));
+                            break;
+                        case links:
+                            fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName(propertiesJSONAST.getString("linkTo")))));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
         }
@@ -122,68 +154,32 @@ public class JsonSchemaParser implements CoraParser{
         return definitions;
     }
 
-//    public List<Definition> parse(JsonObject schema) {
-//        List<Definition> definitions = new ArrayList<>();
-//        JsonObject properties = schema.getAsJsonObject("properties");
-//        String name = schema.get("title").getAsString();
-//        ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
-//        List<FieldDefinition> fieldDefinitions = new ArrayList<>();
-//        if (properties != null) {
-//            HashMap<String, LinkedTreeMap> fieldMap = new Gson().fromJson(properties.toString(), HashMap.class);
-//            fieldMap.forEach((s, linkedTreeMap) -> {
-//                JsonSchemaType type = JsonSchemaType.valueOf(linkedTreeMap.get("type").toString());
-//                switch (type) {
-//                    case string:
-//                        fieldDefinitions.add(new FieldDefinition(s, new TypeName("String")));
-//                        break;
-//                    case number:
-//                        fieldDefinitions.add(new FieldDefinition(s, new TypeName("Int")));
-//                        break;
-//                    case link:
-//                        fieldDefinitions.add(new FieldDefinition(s, new TypeName(linkedTreeMap.get("linkTo").toString())));
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            });
-//        }
-//        ObjectTypeDefinition objectTypeDefinition = builder.name(name).fieldDefinitions(fieldDefinitions).build();
-//        definitions.add(objectTypeDefinition);
-//        return definitions;
-//    }
-
     public static void main(String[] args) {
         String s = "{\n" +
-                "  \"type\": \"object\",\n" +
-                "  \"title\": \"未确认款项\",\n" +
-                "  \"properties\": {\n" +
-                "    \"amount\": {\n" +
-                "      \"type\": \"number\",\n" +
-                "      \"title\": \"到账金额(元)\"\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"title\": \"Payback\",\n" +
+                "    \"$defs\": {\n" +
+                "      \"bill\": {\n" +
+                "        \"title\":\"Bill\",\n" +
+                "        \"type\":\"string\",\n" +
+                "        \"key\": \"id\",\n" +
+                "        \"source\": \"http://localhost:3000/bills\"\n" +
+                "      }\n" +
                 "    },\n" +
-                "    \"company\": {\n" +
-                "      \"enum\": [\n" +
-                "        \"杰世欣\",\n" +
-                "        \"骏岭\",\n" +
-                "        \"其他\"\n" +
-                "      ],\n" +
-                "      \"type\": \"string\",\n" +
-                "      \"title\": \"公司名称\"\n" +
-                "    },\n" +
-                "    \"appendix\": {\n" +
-                "      \"type\": \"string\",\n" +
-                "      \"title\": \"备注\"\n" +
-                "    },\n" +
-                "    \"customer\": {\n" +
-                "      \"type\": \"string\",\n" +
-                "      \"title\": \"客户单位\"\n" +
-                "    },\n" +
-                "    \"tradeDate\": {\n" +
-                "      \"type\": \"string\",\n" +
-                "      \"title\": \"交易时间\"\n" +
+                "    \"properties\": {\n" +
+                "      \"billId\":{\n" +
+                "        \"$ref\":\"#/$defs/bill\"\n" +
+                "      },\n" +
+                "      \"date\":{\n" +
+                "        \"type\":\"string\",\n" +
+                "        \"title\":\"时间\"\n" +
+                "      },\n" +
+                "      \"amount\":{\n" +
+                "        \"title\":\"金额\",\n" +
+                "        \"type\":\"string\"\n" +
+                "      }\n" +
                 "    }\n" +
-                "  }\n" +
-                "}";
+                "  }";
         JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
         List<Definition> definitions = jsonSchemaParser.parseSchema(s);
         System.out.println("definitions");

@@ -61,7 +61,7 @@ public class CoraTypeRegistry {
     //在GraphQL的Schema中的Query类中增加一个访问定义的对象的字段
     private void addDocumentTypeInQuery(String name){
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
-        inputValueDefinitions.add(new InputValueDefinition("id",new TypeName("String")));
+        inputValueDefinitions.add(new InputValueDefinition("_id",new TypeName("String")));
         //orderDocument(id:String):OrderDocument
         this.addFieldDefinitionsInQueryType(GQLTemplate.querySingleInstance(name)
                 ,new TypeName(name)
