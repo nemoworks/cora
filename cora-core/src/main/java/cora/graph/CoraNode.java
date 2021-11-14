@@ -104,6 +104,7 @@ public class CoraNode {
         public Builder(ObjectTypeDefinition definition){
             this.name = definition.getName();
             this.definition = definition;
+            typeMap.put("_id",new TypeName("String"));
             definition.getFieldDefinitions().forEach(fieldDefinition -> {
                 typeMap.put(fieldDefinition.getName(),fieldDefinition.getType());
                 if(fieldDefinition.getType() instanceof ListType) {
