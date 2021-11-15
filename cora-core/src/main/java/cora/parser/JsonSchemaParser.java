@@ -83,7 +83,7 @@ public class JsonSchemaParser implements CoraParser{
     public List<Definition> parse(JSONAST jsonast){
         List<Definition> definitions = new ArrayList<>();
         JSONAST properties = jsonast.getJSONAST("properties");
-        String name = jsonast.getString("title");
+        String name = jsonast.getString("nodeType");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
 
         //properties

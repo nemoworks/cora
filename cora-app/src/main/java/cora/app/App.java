@@ -3,10 +3,12 @@
  */
 package cora.app;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.parser.CoraParser;
 import cora.parser.JSONAST;
 import cora.parser.JsonSchemaParser;
+import cora.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -37,7 +39,6 @@ public class App {
     @PostConstruct
     public void graphNodeInitialization() throws IOException {
         mongoTemplate.dropCollection(collectionName);
-        JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
         final String path = "classpath*:demo/jieshixing.json";
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Arrays.stream(resolver.getResources(path))
@@ -52,12 +53,13 @@ public class App {
                         for (String line; (line = br.readLine()) != null; ) {
                             template.append(line).append("\n");
                         }
-                        JSONAST jsonast = jsonSchemaParser.parse(template.toString());
-                        jsonast.getMap().keySet().forEach(key->{
-                            String s = jsonast.getString(key);
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("schemaDefinition", s);
-                            mongoTemplate.insert(jsonObject, collectionName);
+                        JSONObject parseObject = JSON.parseObject(template.toString());
+                        parseObject.getInnerMap().keySet().forEach(key->{
+                            JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
+                            jsonObject.put("nodeType", StringUtil.upperCase(key));
+                            JSONObject coraNodeDefinition = new JSONObject();
+                            coraNodeDefinition.put("schemaDefinition", jsonObject.toString());
+                            mongoTemplate.insert(coraNodeDefinition, collectionName);
                         });
                     } catch (Exception e) {
                         e.printStackTrace();

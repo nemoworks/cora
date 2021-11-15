@@ -1,5 +1,5 @@
 {
-  "salesman": {
+  "saler": {
     "type": "object",
     "title": "Saler",
     "properties": {
