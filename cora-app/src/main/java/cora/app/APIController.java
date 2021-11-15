@@ -29,10 +29,10 @@ public class APIController {
     }
 
     @PostMapping(value = "/graphql")
-    public ResponseEntity query(@RequestBody String schema){
+    public ResponseEntity query(@RequestBody String schema) {
 //        JSONObject jsonObject = JSON.parseObject(query,JSONObject.class);
 //        String schema = jsonObject.getString("query");
-        if(schema.startsWith("type")){
+        if (schema.startsWith("type")) {
             this.graphQL = coraBuilder.addTypeInGraphQL(schema);
             return ResponseEntity.ok(CoraNodeAPITemplate.build(schema));
         } else if (schema.startsWith("create")) {

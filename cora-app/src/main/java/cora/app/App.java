@@ -5,9 +5,6 @@ package cora.app;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import cora.parser.CoraParser;
-import cora.parser.JSONAST;
-import cora.parser.JsonSchemaParser;
 import cora.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +51,7 @@ public class App {
                             template.append(line).append("\n");
                         }
                         JSONObject parseObject = JSON.parseObject(template.toString());
-                        parseObject.getInnerMap().keySet().forEach(key->{
+                        parseObject.getInnerMap().keySet().forEach(key -> {
                             JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
                             jsonObject.put("nodeType", StringUtil.upperCase(key));
                             JSONObject coraNodeDefinition = new JSONObject();

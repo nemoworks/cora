@@ -72,17 +72,17 @@ public class JsonSchemaParser implements CoraParser{
 
     public List<Definition> parseSchema(String schema) {
         //JsonObject json = parser.fromJson(schema, JsonObject.class);
-        JSONAST parsedAST = this.parse(schema);
+        JsonAST parsedAST = this.parse(schema);
         return parse(parsedAST);
     }
 
-    public JSONAST parse(String schema){
-        return JSONAST.parseJSON(schema);
+    public JsonAST parse(String schema){
+        return JsonAST.parseJSON(schema);
     }
 
-    public List<Definition> parse(JSONAST jsonast){
+    public List<Definition> parse(JsonAST jsonast){
         List<Definition> definitions = new ArrayList<>();
-        JSONAST properties = jsonast.getJSONAST("properties");
+        JsonAST properties = jsonast.getJsonAST("properties");
         String name = jsonast.getString("nodeType");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
 
@@ -90,13 +90,13 @@ public class JsonSchemaParser implements CoraParser{
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
         if(properties != null){
             properties.getMap().keySet().forEach(key->{
-                JSONAST propertiesJSONAST = properties.getJSONAST(key);
+                JsonAST propertiesJSONAST = properties.getJsonAST(key);
                 if(propertiesJSONAST.getString("type") == null){
                     String s = propertiesJSONAST.getString("$ref");
                     String substring = s.substring(s.lastIndexOf('/')+1);
                     fieldDefinitions.add(new FieldDefinition(key,new TypeName(StringUtil.upperCase(substring))));
                 }else if(propertiesJSONAST.getString("type").equals("array")){
-                    String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
+                    String s = propertiesJSONAST.getJsonAST("items").getString("$ref");
                     if(s!=null){
                         String substring = s.substring(s.lastIndexOf('/')+1);
                         fieldDefinitions.add(new FieldDefinition(key,new ListType(new TypeName(StringUtil.upperCase(substring)))));
@@ -106,16 +106,16 @@ public class JsonSchemaParser implements CoraParser{
                 }else{
                     JsonSchemaType type = JsonSchemaType.valueOf(propertiesJSONAST.getString("type"));
                     switch (type) {
-                        case string:
+                        case STRING:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("String")));
                             break;
-                        case number:
+                        case NUMBER:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("Int")));
                             break;
-                        case link:
+                        case LINK:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName(propertiesJSONAST.getString("linkTo"))));
                             break;
-                        case links:
+                        case REF:
                             fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName(propertiesJSONAST.getString("linkTo")))));
                             break;
                         default:

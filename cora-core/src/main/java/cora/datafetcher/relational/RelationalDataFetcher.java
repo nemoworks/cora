@@ -41,7 +41,7 @@ public class RelationalDataFetcher implements DataFetcher<JSONObject> {
         String s = VelocityTemplate.build(QUERY_TEMPLATE, map);
 
         ResultSet rs = null;
-        Map<String, Type> typeMap = CoraGraph.graphNodeMap.get(fieldType).getTypeMap();
+        Map<String, Type> typeMap = CoraGraph.nodeMap.get(fieldType).getTypeMap();
         JSONObject jsonObject = new JSONObject();
         try {
             rs = statement.executeQuery(s);

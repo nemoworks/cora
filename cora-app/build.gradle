@@ -8,11 +8,10 @@ plugins {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.2.5.RELEASE'
-    implementation 'org.apache.commons:commons-text'
     implementation 'org.springframework:spring-context:5.3.12'
     implementation 'com.graphql-java:graphql-java:17.3'
-    implementation 'com.alibaba:fastjson:1.2.75'
     implementation 'org.springframework.data:spring-data-mongodb:2.2.5.RELEASE'
+    implementation 'com.alibaba:fastjson:1.2.75'
     implementation project(':cora-core')
 }
 

@@ -10,16 +10,18 @@ import java.util.Properties;
 
 public class VelocityTemplate {
     private static final Properties props = new Properties();
+
     static {
         props.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
         props.setProperty(Velocity.RESOURCE_LOADER, "class");
         props.setProperty("class.resource.loader.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
     }
+
     private static final VelocityEngine velocityEngine = new VelocityEngine(props);
 
 
-    public static String build(String template, Map<String,String> fields){
+    public static String build(String template, Map<String, String> fields) {
         VelocityContext context = new VelocityContext();
         fields.forEach(context::put);
         StringWriter writer = new StringWriter();

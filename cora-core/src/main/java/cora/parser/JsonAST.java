@@ -8,28 +8,28 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JSONAST {
+public class JsonAST {
 
     private Map<String, Object> map;
 
-    public JSONAST() {
-        this.map = new HashMap<>();
-    }
+//    public JsonAST() {
+//        this.map = new HashMap<>();
+//    }
 
-    protected JSONAST(JSONParser.ObjContext objCtx) {
+    protected JsonAST(JSONParser.ObjContext objCtx) {
         this.map = new HashMap<>();
-        for (JSONParser.PairContext pairCtx: objCtx.pair()) {
+        for (JSONParser.PairContext pairCtx : objCtx.pair()) {
             String key = pairCtx.STRING().getText();
-            map.put(key.substring(1, key.length()-1), pairCtx.value());
+            map.put(key.substring(1, key.length() - 1), pairCtx.value());
         }
     }
 
-    public JSONAST getJSONAST(String key) {
-        JSONParser.ValueContext value = (JSONParser.ValueContext)map.get(key);
+    public JsonAST getJsonAST(String key) {
+        JSONParser.ValueContext value = (JSONParser.ValueContext) map.get(key);
         if (value == null) {
             return null;
         }
-        return new JSONAST(value.obj());
+        return new JsonAST(value.obj());
     }
 
     public String getString(String key) {
@@ -38,11 +38,11 @@ public class JSONAST {
             return null;
         }
         if (JSONParser.ValueContext.class.isInstance(value)) {
-            JSONParser.ValueContext ctx = (JSONParser.ValueContext)value;
+            JSONParser.ValueContext ctx = (JSONParser.ValueContext) value;
             String newValue = ctx.STRING().getText();
-            map.put(key, newValue.substring(1, newValue.length()-1));
+            map.put(key, newValue.substring(1, newValue.length() - 1));
         }
-        return (String)map.get(key);
+        return (String) map.get(key);
     }
 
     public int getInt(String key) {
@@ -73,12 +73,12 @@ public class JSONAST {
         map.put(key, object);
     }
 
-    public static JSONAST parseJSON(String text) {
+    public static JsonAST parseJSON(String text) {
         JSONLexer lexer = new JSONLexer(CharStreams.fromString(text));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JSONParser parser = new JSONParser(tokens);
         JSONParser.ObjContext objCtx = parser.obj();
-        return new JSONAST(objCtx);
+        return new JsonAST(objCtx);
     }
 
 

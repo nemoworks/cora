@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CoraGraph {
-    public static final Map<String, CoraNode> graphNodeMap = new HashMap<>();
+    public static final Map<String, CoraNode> nodeMap = new HashMap<>();
 
     public CoraGraph() {
     }
@@ -18,10 +18,10 @@ public class CoraGraph {
     }
 
     public static void mergeCoraNode(CoraNode coraNode) {
-        graphNodeMap.put(coraNode.getName(), coraNode);
+        nodeMap.put(coraNode.getName(), coraNode);
     }
 
     public Map<String, CoraNode> getGraphNodeMap() {
-        return graphNodeMap;
+        return nodeMap;
     }
 }

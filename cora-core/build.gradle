@@ -5,10 +5,10 @@
 plugins {
     id 'cora.java-library-conventions'
 }
-configurations.all {
-    resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
-    resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
-}
+//configurations.all {
+//    resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
+//    resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
+//}
 
 dependencies{
     implementation 'com.graphql-java:graphql-java:17.3'
