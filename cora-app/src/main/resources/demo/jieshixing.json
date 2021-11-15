@@ -1,5 +1,5 @@
 {
-  "salesman": {
+  "saler": {
     "type": "object",
     "title": "Saler",
     "properties": {
@@ -12,14 +12,6 @@
   "bill": {
     "type": "object",
     "title": "Bill",
-    "$defs": {
-      "saler": {
-        "type": "string",
-        "title": "Saler",
-        "key": "name",
-        "source": "http://localhost:3000/salers"
-      }
-    },
     "properties": {
       "invoiceCompany": {
         "type": "string",
@@ -71,14 +63,6 @@
   "salerExpenditures": {
     "type": "object",
     "title": "SalerExpenditure",
-    "$defs": {
-      "saler": {
-        "type": "string",
-        "title": "Saler",
-        "key": "name",
-        "source": "http://localhost:3000/salers"
-      }
-    },
     "properties": {
       "date": {
         "type": "string",
@@ -108,26 +92,6 @@
   "deposit": {
     "type": "object",
     "title": "Deposit",
-    "$defs": {
-      "saler": {
-        "type": "string",
-        "title": "Saler",
-        "key": "name",
-        "source": "http://localhost:3000/salers"
-      },
-      "bill": {
-        "type": "string",
-        "title": "Bill",
-        "key": "id",
-        "source": "http://localhost:3000/bills"
-      },
-      "expenditure": {
-        "type": "string",
-        "title": "CustomerExpenditure",
-        "key": "id",
-        "source": "http://localhost:3000/customerExpenditures"
-      }
-    },
     "properties": {
       "saler": {
         "$ref": "#/$defs/saler"
@@ -147,7 +111,7 @@
         "type": "array",
         "title": "客户开支集合",
         "items": {
-          "$ref": "#/$defs/expenditure"
+          "$ref": "#/$defs/customerExpenditure"
         }
       }
     }
@@ -169,20 +133,6 @@
   "grossProfit": {
     "type": "object",
     "title": "GrossProfit",
-    "$defs":{
-      "saler": {
-        "type": "string",
-        "title": "Saler",
-        "key": "name",
-        "source": "http://localhost:3000/salers"
-      },
-      "salerExpenditure":{
-        "type": "string",
-        "title": "SalerExpenditure",
-        "key": "id",
-        "source": "http://localhost:3000/salerExpenditures"
-      }
-    },
     "properties": {
       "date": {
         "title": "日期",
@@ -237,14 +187,6 @@
   "margin": {
     "type": "object",
     "title": "Margin",
-    "$defs": {
-      "saler": {
-        "type": "string",
-        "title": "Saler",
-        "key": "name",
-        "source": "http://localhost:3000/salers"
-      }
-    },
     "properties": {
       "date": {
         "title": "日期",
@@ -354,14 +296,6 @@
   "payback":{
     "type": "object",
     "title": "Payback",
-    "$defs": {
-      "bill": {
-        "title":"Bill",
-        "type":"string",
-        "key": "id",
-        "source": "http://localhost:3000/bills"
-      }
-    },
     "properties": {
       "billId":{
         "$ref":"#/$defs/bill"

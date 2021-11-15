@@ -12,6 +12,7 @@ import graphql.language.ObjectTypeDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
@@ -33,14 +34,19 @@ public class CoraBuilder {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @Value("${cora.node.collectionName}")
+    String collectionName;
+
+
     private GraphQLSchema graphQLSchema;
 
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
 
+
     public GraphQL createGraphQL() {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
-        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, "graphNode");
+        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
         coraNodes.forEach(coraNode -> {
             String schema = coraNode.getString("schemaDefinition");
             List<Definition> parse = coraParser.parseSchema(schema);
