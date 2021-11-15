@@ -1,7 +1,6 @@
 {
   "saler": {
     "type": "object",
-    "title": "Saler",
     "properties": {
       "name": {
       "type": "string",
@@ -11,7 +10,6 @@
   },
   "bill": {
     "type": "object",
-    "title": "Bill",
     "properties": {
       "invoiceCompany": {
         "type": "string",
@@ -38,9 +36,8 @@
       }
     }
   },
-  "customerExpenditures": {
+  "customerExpenditure": {
     "type": "object",
-    "title": "CustomerExpenditure",
     "properties": {
       "date": {
         "type": "string",
@@ -60,9 +57,8 @@
       }
     }
   },
-  "salerExpenditures": {
+  "salerExpenditure": {
     "type": "object",
-    "title": "SalerExpenditure",
     "properties": {
       "date": {
         "type": "string",
@@ -91,7 +87,6 @@
   },
   "deposit": {
     "type": "object",
-    "title": "Deposit",
     "properties": {
       "saler": {
         "$ref": "#/$defs/saler"
@@ -118,7 +113,6 @@
   },
   "cash": {
   "type": "object",
-  "title": "Cash",
   "properties": {
       "date": {
         "title": "日期",
@@ -132,7 +126,6 @@
   },
   "grossProfit": {
     "type": "object",
-    "title": "GrossProfit",
     "properties": {
       "date": {
         "title": "日期",
@@ -156,7 +149,6 @@
   },
   "companyPayment": {
     "type": "object",
-    "title": "CompanyPayment",
     "properties": {
       "date": {
         "title": "日期",
@@ -186,7 +178,6 @@
   },
   "margin": {
     "type": "object",
-    "title": "Margin",
     "properties": {
       "date": {
         "title": "日期",
@@ -235,7 +226,6 @@
   },
   "cashSalary": {
     "type": "object",
-    "title": "CashSalary",
     "properties": {
       "date": {
         "title": "日期",
@@ -265,7 +255,6 @@
   },
   "administrativeCost": {
     "type": "object",
-    "title": "AdministrativeCost",
     "properties": {
       "date": {
         "title": "日期",
@@ -295,7 +284,6 @@
   },
   "payback":{
     "type": "object",
-    "title": "Payback",
     "properties": {
       "billId":{
         "$ref":"#/$defs/bill"
