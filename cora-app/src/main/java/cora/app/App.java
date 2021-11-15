@@ -3,13 +3,65 @@
  */
 package cora.app;
 
+import com.alibaba.fastjson.JSONObject;
+import cora.parser.CoraParser;
+import cora.parser.JSONAST;
+import cora.parser.JsonSchemaParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import javax.annotation.PostConstruct;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 @SpringBootApplication
 public class App {
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
+    }
+
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    @Value("${cora.node.collectionName}")
+    String collectionName;
+
+    @PostConstruct
+    public void graphNodeInitialization() throws IOException {
+        mongoTemplate.dropCollection(collectionName);
+        JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
+        final String path = "classpath*:demo/jieshixing.json";
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Arrays.stream(resolver.getResources(path))
+                .parallel()
+                .forEach(resource -> {
+                    try {
+                        String fileName = resource.getFilename();
+                        InputStream input = resource.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(input);
+                        BufferedReader br = new BufferedReader(reader);
+                        StringBuilder template = new StringBuilder();
+                        for (String line; (line = br.readLine()) != null; ) {
+                            template.append(line).append("\n");
+                        }
+                        JSONAST jsonast = jsonSchemaParser.parse(template.toString());
+                        jsonast.getMap().keySet().forEach(key->{
+                            String s = jsonast.getString(key);
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("schemaDefinition", s);
+                            mongoTemplate.insert(jsonObject, collectionName);
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }

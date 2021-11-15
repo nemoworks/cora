@@ -1,28 +1,17 @@
 package cora.parser;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
-import cora.antlr.json.JSONLexer;
-import cora.antlr.json.JSONParser;
+import cora.util.StringUtil;
 import graphql.language.*;
-import graphql.parser.MultiSourceReader;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 
@@ -94,19 +83,9 @@ public class JsonSchemaParser implements CoraParser{
     public List<Definition> parse(JSONAST jsonast){
         List<Definition> definitions = new ArrayList<>();
         JSONAST properties = jsonast.getJSONAST("properties");
-        JSONAST defs = jsonast.getJSONAST("$defs");
         String name = jsonast.getString("title");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
 
-        //defMap
-        Map<String,Type> defMap = new HashMap<>();
-        if(defs!=null){
-            defs.getMap().keySet().forEach(def->{
-                JSONAST defType = defs.getJSONAST(def);
-                String type = defType.getString("title");
-                defMap.put(def,new TypeName(defType.getString("title")));
-            });
-        }
         //properties
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
         if(properties != null){
@@ -115,16 +94,12 @@ public class JsonSchemaParser implements CoraParser{
                 if(propertiesJSONAST.getString("type") == null){
                     String s = propertiesJSONAST.getString("$ref");
                     String substring = s.substring(s.lastIndexOf('/')+1);
-                    if(defMap.get(substring)!=null){
-                        fieldDefinitions.add(new FieldDefinition(key,defMap.get(substring)));
-                    }
+                    fieldDefinitions.add(new FieldDefinition(key,new TypeName(StringUtil.upperCase(substring))));
                 }else if(propertiesJSONAST.getString("type").equals("array")){
                     String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
                     if(s!=null){
                         String substring = s.substring(s.lastIndexOf('/')+1);
-                        if(defMap.get(substring)!=null){
-                            fieldDefinitions.add(new FieldDefinition(key,new ListType(defMap.get(substring))));
-                        }
+                        fieldDefinitions.add(new FieldDefinition(key,new ListType(new TypeName(StringUtil.upperCase(substring)))));
                     }else{
                         fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName("String"))));
                     }
@@ -157,26 +132,25 @@ public class JsonSchemaParser implements CoraParser{
     public static void main(String[] args) {
         String s = "{\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"title\": \"Payback\",\n" +
-                "    \"$defs\": {\n" +
-                "      \"bill\": {\n" +
-                "        \"title\":\"Bill\",\n" +
-                "        \"type\":\"string\",\n" +
-                "        \"key\": \"id\",\n" +
-                "        \"source\": \"http://localhost:3000/bills\"\n" +
-                "      }\n" +
-                "    },\n" +
+                "    \"title\": \"GrossProfit\",\n" +
                 "    \"properties\": {\n" +
-                "      \"billId\":{\n" +
-                "        \"$ref\":\"#/$defs/bill\"\n" +
+                "      \"date\": {\n" +
+                "        \"title\": \"日期\",\n" +
+                "        \"type\": \"string\"\n" +
                 "      },\n" +
-                "      \"date\":{\n" +
-                "        \"type\":\"string\",\n" +
-                "        \"title\":\"时间\"\n" +
+                "      \"amount\": {\n" +
+                "        \"title\": \"金额\",\n" +
+                "        \"type\": \"string\"\n" +
                 "      },\n" +
-                "      \"amount\":{\n" +
-                "        \"title\":\"金额\",\n" +
-                "        \"type\":\"string\"\n" +
+                "      \"salerExpenditures\":{\n" +
+                "        \"title\":\"销售支出集合\",\n" +
+                "        \"type\":\"array\",\n" +
+                "        \"items\":{\n" +
+                "          \"$ref\":\"#/$defs/salerExpenditure\"\n" +
+                "        }\n" +
+                "      },\n" +
+                "      \"saler\":{\n" +
+                "        \"$ref\":\"#/$defs/saler\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }";

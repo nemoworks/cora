@@ -4,3 +4,8 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://cora:l9s7K76m5y1LvjCV@coracluster.gh6kb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+
+cora:
+  node:
+    collectionName: coranode
