@@ -8,4 +8,4 @@ spring:
 
 cora:
   node:
-    collectionName: coranode
+    collectionName: graphNode

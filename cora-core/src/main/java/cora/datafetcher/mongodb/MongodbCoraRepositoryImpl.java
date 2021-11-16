@@ -1,7 +1,7 @@
 package cora.datafetcher.mongodb;
 
 import com.alibaba.fastjson.JSONObject;
-import cora.datafetcher.NodeInstanceListFetcher;
+import cora.datafetcher.CoraRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -9,13 +9,30 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongodbNodeInstanceListFetcher implements NodeInstanceListFetcher {
-    private final MongoTemplate mongoTemplate;
+public class MongodbCoraRepositoryImpl implements CoraRepository<JSONObject> {
 
+    private final MongoTemplate mongoTemplate;
     private static final String collectionName = "jieshixing";
 
-    public MongodbNodeInstanceListFetcher(MongoTemplate mongoTemplate) {
+    public MongodbCoraRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    @Override
+    public JSONObject createNodeInstance(String nodeType, JSONObject data) {
+        data.put("nodeType",nodeType);
+        return mongoTemplate.insert(data, collectionName);
+    }
+
+    @Override
+    public JSONObject deleteNodeInstanceById(String id) {
+        return null;
+    }
+
+    @Override
+    public JSONObject queryNodeInstanceById(String id, String nodeType) {
+        JSONObject result = mongoTemplate.findById(id, JSONObject.class, collectionName);
+        return result;
     }
 
     @Override
@@ -36,4 +53,8 @@ public class MongodbNodeInstanceListFetcher implements NodeInstanceListFetcher {
         return results;
     }
 
+    @Override
+    public JSONObject updateNodeInstance(String nodeType, String id, JSONObject data) {
+        return null;
+    }
 }
