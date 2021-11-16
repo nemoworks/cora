@@ -7,8 +7,7 @@ import cora.datafetcher.mongodb.MongodbNodeInstanceConstructor;
 import cora.datafetcher.mongodb.MongodbNodeInstanceFetcher;
 import cora.datafetcher.mongodb.MongodbNodeInstanceListFetcher;
 import cora.parser.CoraParser;
-import cora.parser.JsonSchemaParser;
-import cora.parser.SDLParser;
+import cora.parser.JSONSchemaParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +65,6 @@ public class Config {
 
     @Bean
     public CoraParser coraParser() {
-        return new JsonSchemaParser();
+        return new JSONSchemaParser();
     }
 }

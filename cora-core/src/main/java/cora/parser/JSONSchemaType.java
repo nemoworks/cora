@@ -1,5 +1,5 @@
 package cora.parser;
 
-public enum JsonSchemaType {
+public enum JSONSchemaType {
     LINK, STRING, DATE, NUMBER, OBJECT, ARRAY, REF
 }
