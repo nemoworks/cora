@@ -33,7 +33,7 @@ public class App {
     @Value("${cora.node.collectionName}")
     String collectionName;
 
-   // @PostConstruct
+    @PostConstruct
     public void graphNodeInitialization() throws IOException {
         mongoTemplate.dropCollection(collectionName);
         final String path = "classpath*:demo/jieshixing.json";
