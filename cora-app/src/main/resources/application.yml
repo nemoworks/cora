@@ -8,4 +8,5 @@ spring:
 
 cora:
   node:
-    collectionName: graphNode
+    typeCollection: graphNode
+    dataCollection: jieshixin

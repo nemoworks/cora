@@ -15,8 +15,11 @@ import java.util.List;
 
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 
-public class JSONSchemaParser implements CoraParser{
-    private static final Gson parser = new Gson();
+public class JSONSchemaParser implements CoraParser {
+
+    public enum JSONSchemaType {
+        STRING, DATE, NUMBER, OBJECT, ARRAY
+    }
 
     @Override
     public boolean isValid(String schema) {
@@ -35,7 +38,8 @@ public class JSONSchemaParser implements CoraParser{
     private static boolean isJsonValid(final JsonReader jsonReader) throws IOException {
         try {
             JsonToken token;
-            loop: while ((token = jsonReader.peek()) != END_DOCUMENT && token != null) {
+            loop:
+            while ((token = jsonReader.peek()) != END_DOCUMENT && token != null) {
                 switch (token) {
                     case BEGIN_ARRAY:
                         jsonReader.beginArray();
@@ -71,16 +75,15 @@ public class JSONSchemaParser implements CoraParser{
     }
 
     public List<Definition> parseSchema(String schema) {
-        //JsonObject json = parser.fromJson(schema, JsonObject.class);
         JSONAST parsedAST = this.parse(schema);
-        return parse(parsedAST);
+        return parseAST(parsedAST);
     }
 
-    public JSONAST parse(String schema){
+    private JSONAST parse(String schema) {
         return JSONAST.parseJSON(schema);
     }
 
-    public List<Definition> parse(JSONAST jsonast){
+    private List<Definition> parseAST(JSONAST jsonast) {
         List<Definition> definitions = new ArrayList<>();
         JSONAST properties = jsonast.getJSONAST("properties");
         String name = jsonast.getString("nodeType");
@@ -88,22 +91,22 @@ public class JSONSchemaParser implements CoraParser{
 
         //properties
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
-        if(properties != null){
-            properties.getMap().keySet().forEach(key->{
+        if (properties != null) {
+            properties.getMap().keySet().forEach(key -> {
                 JSONAST propertiesJSONAST = properties.getJSONAST(key);
-                if(propertiesJSONAST.getString("type") == null){
+                if (propertiesJSONAST.getString("type") == null) {
                     String s = propertiesJSONAST.getString("$ref");
-                    String substring = s.substring(s.lastIndexOf('/')+1);
-                    fieldDefinitions.add(new FieldDefinition(key,new TypeName(StringUtil.upperCase(substring))));
-                }else if(propertiesJSONAST.getString("type").equals("array")){
+                    String substring = s.substring(s.lastIndexOf('/') + 1);
+                    fieldDefinitions.add(new FieldDefinition(key, new TypeName(StringUtil.upperCase(substring))));
+                } else if (propertiesJSONAST.getString("type").equals("array")) {
                     String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
-                    if(s!=null){
-                        String substring = s.substring(s.lastIndexOf('/')+1);
-                        fieldDefinitions.add(new FieldDefinition(key,new ListType(new TypeName(StringUtil.upperCase(substring)))));
-                    }else{
+                    if (s != null) {
+                        String substring = s.substring(s.lastIndexOf('/') + 1);
+                        fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName(StringUtil.upperCase(substring)))));
+                    } else {
                         fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName("String"))));
                     }
-                }else{
+                } else {
                     JSONSchemaType type = JSONSchemaType.valueOf(propertiesJSONAST.getString("type"));
                     switch (type) {
                         case STRING:
@@ -112,11 +115,8 @@ public class JSONSchemaParser implements CoraParser{
                         case NUMBER:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("Int")));
                             break;
-                        case LINK:
-                            fieldDefinitions.add(new FieldDefinition(key, new TypeName(propertiesJSONAST.getString("linkTo"))));
-                            break;
-                        case REF:
-                            fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName(propertiesJSONAST.getString("linkTo")))));
+                        case DATE:
+                            fieldDefinitions.add(new FieldDefinition(key, new TypeName("Date")));
                             break;
                         default:
                             break;

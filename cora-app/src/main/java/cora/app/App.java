@@ -30,7 +30,7 @@ public class App {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Value("${cora.node.collectionName}")
+    @Value("${cora.node.typeCollection}")
     String collectionName;
 
     @PostConstruct
