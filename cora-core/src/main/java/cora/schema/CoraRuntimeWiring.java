@@ -1,11 +1,5 @@
 package cora.schema;
 
-import cora.datafetcher.CoraNodeInstanceConstructor;
-import cora.datafetcher.CoraNodeInstanceFetcher;
-import cora.datafetcher.CoraNodeInstanceListFetcher;
-import cora.datafetcher.mongodb.MongodbNodeInstanceConstructor;
-import cora.datafetcher.mongodb.MongodbNodeInstanceFetcher;
-import cora.datafetcher.mongodb.MongodbNodeInstanceListFetcher;
 import cora.graph.CoraNode;
 import cora.util.GQLTemplate;
 import graphql.language.ListType;
@@ -20,11 +14,11 @@ import java.util.Map;
 public class CoraRuntimeWiring {
     private RuntimeWiring runtimeWiring;
 
-    CoraNodeInstanceFetcher mongodbNodeInstanceFetcher;
+    DataFetcher mongodbNodeInstanceFetcher;
 
-    CoraNodeInstanceListFetcher mongodbNodeInstanceListFetcher;
+    DataFetcher mongodbNodeInstanceListFetcher;
 
-    CoraNodeInstanceConstructor mongodbNodeInstanceConstructor;
+    DataFetcher mongodbNodeInstanceConstructor;
 
     private static final String QUERY_IN_GRAPHQL = "Query";
 
@@ -33,9 +27,9 @@ public class CoraRuntimeWiring {
     public CoraRuntimeWiring(){
     }
 
-    public CoraRuntimeWiring(CoraNodeInstanceFetcher mongodbNodeInstanceFetcher
-            , CoraNodeInstanceListFetcher mongodbNodeInstanceListFetcher
-            , CoraNodeInstanceConstructor mongodbNodeInstanceConstructor) {
+    public CoraRuntimeWiring(DataFetcher mongodbNodeInstanceFetcher
+            , DataFetcher mongodbNodeInstanceListFetcher
+            , DataFetcher mongodbNodeInstanceConstructor) {
         runtimeWiring = RuntimeWiring.newRuntimeWiring().build();
         this.mongodbNodeInstanceFetcher = mongodbNodeInstanceFetcher;
         this.mongodbNodeInstanceListFetcher = mongodbNodeInstanceListFetcher;

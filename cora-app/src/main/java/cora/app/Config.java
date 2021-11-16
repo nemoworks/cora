@@ -1,19 +1,21 @@
 package cora.app;
 
-import cora.datafetcher.CoraNodeInstanceConstructor;
-import cora.datafetcher.CoraNodeInstanceFetcher;
-import cora.datafetcher.CoraNodeInstanceListFetcher;
-import cora.datafetcher.mongodb.MongodbNodeInstanceConstructor;
-import cora.datafetcher.mongodb.MongodbNodeInstanceFetcher;
-import cora.datafetcher.mongodb.MongodbNodeInstanceListFetcher;
+import com.alibaba.fastjson.JSONObject;
+import cora.datafetcher.CoraRepository;
+import cora.datafetcher.CoraStorage;
+import cora.datafetcher.mongodb.CoraMongodb;
+import cora.datafetcher.mongodb.MongodbCoraRepositoryImpl;
 import cora.parser.CoraParser;
 import cora.parser.JSONSchemaParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
+import graphql.schema.DataFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.List;
 
 @Configuration
 public class Config {
@@ -22,33 +24,29 @@ public class Config {
     MongoTemplate mongoTemplate;
 
     @Bean
-    public MongodbNodeInstanceConstructor mongodbNodeInstanceConstructor() {
-        return new MongodbNodeInstanceConstructor(mongoTemplate);
+    public CoraRepository<JSONObject> mongodbCoraRepository() {
+        return new MongodbCoraRepositoryImpl(mongoTemplate) {
+        };
     }
 
     @Bean
-    public MongodbNodeInstanceFetcher mongodbNodeInstanceFetcher() {
-        return new MongodbNodeInstanceFetcher(mongoTemplate);
+    public CoraStorage<JSONObject> coraMongodb() {
+        return new CoraMongodb(mongodbCoraRepository());
     }
 
     @Bean
-    public MongodbNodeInstanceListFetcher mongodbNodeInstanceListFetcher() {
-        return new MongodbNodeInstanceListFetcher(mongoTemplate);
+    public DataFetcher<List<JSONObject>> coraNodeInstanceListFetcher() {
+        return coraMongodb().getListFetcher();
     }
 
     @Bean
-    public CoraNodeInstanceConstructor coraNodeInstanceConstructor() {
-        return new CoraNodeInstanceConstructor(mongodbNodeInstanceConstructor());
+    public DataFetcher<JSONObject> coraNodeInstanceConstructor() {
+        return coraMongodb().getCreator();
     }
 
     @Bean
-    public CoraNodeInstanceListFetcher coraNodeInstanceListFetcher() {
-        return new CoraNodeInstanceListFetcher(mongodbNodeInstanceListFetcher());
-    }
-
-    @Bean
-    public CoraNodeInstanceFetcher coraNodeInstanceFetcher() {
-        return new CoraNodeInstanceFetcher(mongodbNodeInstanceFetcher());
+    public DataFetcher<JSONObject> coraNodeInstanceFetcher() {
+        return coraMongodb().getFetcher();
     }
 
     @Bean
