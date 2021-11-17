@@ -18,9 +18,6 @@ public class CoraMongodb implements CoraStorage<JSONObject> {
         this.coraRepository = coraRepository;
     }
 
-
-    private static final String collectionName = "jieshixing";
-
     @Override
     public DataFetcher<JSONObject> getFetcher() {
         return dataFetcherEnvironment->{

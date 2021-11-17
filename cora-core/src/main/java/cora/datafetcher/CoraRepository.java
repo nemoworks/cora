@@ -12,11 +12,9 @@ public interface CoraRepository<T> {
 
     T queryNodeInstanceById(String id, String nodeType);
 
-
     List<T> queryNodeInstanceList(String nodeType);
 
     List<T> queryNodeInstanceList(List<String> instanceIds);
-
 
     T updateNodeInstance(String nodeType, String id, JSONObject data);
 }

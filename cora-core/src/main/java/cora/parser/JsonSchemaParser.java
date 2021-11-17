@@ -136,11 +136,11 @@ public class JsonSchemaParser implements CoraParser{
                 "    \"properties\": {\n" +
                 "      \"date\": {\n" +
                 "        \"title\": \"日期\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"amount\": {\n" +
                 "        \"title\": \"金额\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"salerExpenditures\":{\n" +
                 "        \"title\":\"销售支出集合\",\n" +
