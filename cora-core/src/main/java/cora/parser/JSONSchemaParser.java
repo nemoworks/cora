@@ -1,6 +1,5 @@
 package cora.parser;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
@@ -75,17 +74,17 @@ public class JSONSchemaParser implements CoraParser {
     }
 
     public List<Definition> parseSchema(String schema) {
-        JSONAST parsedAST = this.parse(schema);
+        JsonAST parsedAST = this.parse(schema);
         return parseAST(parsedAST);
     }
 
-    private JSONAST parse(String schema) {
-        return JSONAST.parseJSON(schema);
+    private JsonAST parse(String schema) {
+        return JsonAST.parseJSON(schema);
     }
 
-    private List<Definition> parseAST(JSONAST jsonast) {
+    private List<Definition> parseAST(JsonAST jsonast) {
         List<Definition> definitions = new ArrayList<>();
-        JSONAST properties = jsonast.getJSONAST("properties");
+        JsonAST properties = jsonast.getJSONAST("properties");
         String name = jsonast.getString("nodeType");
         ObjectTypeDefinition.Builder builder = ObjectTypeDefinition.newObjectTypeDefinition();
 
@@ -93,13 +92,13 @@ public class JSONSchemaParser implements CoraParser {
         List<FieldDefinition> fieldDefinitions = new ArrayList<>();
         if (properties != null) {
             properties.getMap().keySet().forEach(key -> {
-                JSONAST propertiesJSONAST = properties.getJSONAST(key);
-                if (propertiesJSONAST.getString("type") == null) {
-                    String s = propertiesJSONAST.getString("$ref");
+                JsonAST propertiesJsonAST = properties.getJSONAST(key);
+                if (propertiesJsonAST.getString("type") == null) {
+                    String s = propertiesJsonAST.getString("$ref");
                     String substring = s.substring(s.lastIndexOf('/') + 1);
                     fieldDefinitions.add(new FieldDefinition(key, new TypeName(StringUtil.upperCase(substring))));
-                } else if (propertiesJSONAST.getString("type").equals("array")) {
-                    String s = propertiesJSONAST.getJSONAST("items").getString("$ref");
+                } else if (propertiesJsonAST.getString("type").equals("array")) {
+                    String s = propertiesJsonAST.getJSONAST("items").getString("$ref");
                     if (s != null) {
                         String substring = s.substring(s.lastIndexOf('/') + 1);
                         fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName(StringUtil.upperCase(substring)))));
@@ -107,7 +106,7 @@ public class JSONSchemaParser implements CoraParser {
                         fieldDefinitions.add(new FieldDefinition(key, new ListType(new TypeName("String"))));
                     }
                 } else {
-                    JSONSchemaType type = JSONSchemaType.valueOf(propertiesJSONAST.getString("type"));
+                    JSONSchemaType type = JSONSchemaType.valueOf(propertiesJsonAST.getString("type"));
                     switch (type) {
                         case STRING:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("String")));
@@ -131,26 +130,26 @@ public class JSONSchemaParser implements CoraParser {
 
     public static void main(String[] args) {
         String s = "{\n" +
-                "    \"type\": \"object\",\n" +
-                "    \"title\": \"GrossProfit\",\n" +
+                "    \"type\": \"OBJECT\",\n" +
+                "    \"nodeType\": \"GrossProfit\",\n" +
                 "    \"properties\": {\n" +
                 "      \"date\": {\n" +
                 "        \"title\": \"日期\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"amount\": {\n" +
                 "        \"title\": \"金额\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"salerExpenditures\":{\n" +
                 "        \"title\":\"销售支出集合\",\n" +
-                "        \"type\":\"array\",\n" +
+                "        \"type\":\"ARRAY\",\n" +
                 "        \"items\":{\n" +
-                "          \"$ref\":\"#/$defs/salerExpenditure\"\n" +
+                "          \"$ref\":\"#/$defs/SalerExpenditure\"\n" +
                 "        }\n" +
                 "      },\n" +
                 "      \"saler\":{\n" +
-                "        \"$ref\":\"#/$defs/saler\"\n" +
+                "        \"$ref\":\"#/$defs/Saler\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }";
