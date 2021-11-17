@@ -131,26 +131,26 @@ public class JsonSchemaParser implements CoraParser{
 
     public static void main(String[] args) {
         String s = "{\n" +
-                "    \"type\": \"object\",\n" +
-                "    \"title\": \"GrossProfit\",\n" +
+                "    \"type\": \"OBJECT\",\n" +
+                "    \"nodeType\": \"GrossProfit\",\n" +
                 "    \"properties\": {\n" +
                 "      \"date\": {\n" +
                 "        \"title\": \"日期\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"amount\": {\n" +
                 "        \"title\": \"金额\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"STRING\"\n" +
                 "      },\n" +
                 "      \"salerExpenditures\":{\n" +
                 "        \"title\":\"销售支出集合\",\n" +
-                "        \"type\":\"array\",\n" +
+                "        \"type\":\"ARRAY\",\n" +
                 "        \"items\":{\n" +
-                "          \"$ref\":\"#/$defs/salerExpenditure\"\n" +
+                "          \"$ref\":\"#/$defs/SalerExpenditure\"\n" +
                 "        }\n" +
                 "      },\n" +
                 "      \"saler\":{\n" +
-                "        \"$ref\":\"#/$defs/saler\"\n" +
+                "        \"$ref\":\"#/$defs/Saler\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }";

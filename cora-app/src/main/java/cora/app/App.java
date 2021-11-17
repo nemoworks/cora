@@ -53,7 +53,7 @@ public class App {
                         JSONObject parseObject = JSON.parseObject(template.toString());
                         parseObject.getInnerMap().keySet().forEach(key -> {
                             JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
-                            jsonObject.put("nodeType", StringUtil.upperCase(key));
+//                            jsonObject.put("nodeType", StringUtil.upperCase(key));
                             JSONObject coraNodeDefinition = new JSONObject();
                             coraNodeDefinition.put("schemaDefinition", jsonObject.toString());
                             mongoTemplate.insert(coraNodeDefinition, collectionName);
