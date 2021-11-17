@@ -1,15 +1,18 @@
-package cora.antlr.graphql;// Generated from GraphQL.g4 by ANTLR 4.7.1
+package cora.antlr.graphql;
 
+// Generated from GraphQL.g4 by ANTLR 4.9.3
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.LexerATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class GraphQLLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.3", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -32,41 +35,50 @@ public class GraphQLLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
-		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
-		"T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", 
-		"T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", 
-		"T__33", "T__34", "T__35", "T__36", "T__37", "T__38", "T__39", "T__40", 
-		"T__41", "T__42", "T__43", "T__44", "T__45", "T__46", "T__47", "T__48", 
-		"T__49", "NAME", "CHARACTER", "STRING", "BLOCK_STRING", "ID", "ESC", "UNICODE", 
-		"HEX", "NONZERO_DIGIT", "DIGIT", "FRACTIONAL_PART", "EXPONENTIAL_PART", 
-		"EXPONENT_INDICATOR", "SIGN", "NEGATIVE_SIGN", "FLOAT", "INT", "PUNCTUATOR", 
-		"EXP", "WS", "COMMA", "LineComment", "UNICODE_BOM", "UTF8_BOM", "UTF16_BOM", 
-		"UTF32_BOM"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
+			"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
+			"T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", 
+			"T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", 
+			"T__33", "T__34", "T__35", "T__36", "T__37", "T__38", "T__39", "T__40", 
+			"T__41", "T__42", "T__43", "T__44", "T__45", "T__46", "T__47", "T__48", 
+			"T__49", "NAME", "CHARACTER", "STRING", "BLOCK_STRING", "ID", "ESC", 
+			"UNICODE", "HEX", "NONZERO_DIGIT", "DIGIT", "FRACTIONAL_PART", "EXPONENTIAL_PART", 
+			"EXPONENT_INDICATOR", "SIGN", "NEGATIVE_SIGN", "FLOAT", "INT", "PUNCTUATOR", 
+			"EXP", "WS", "COMMA", "LineComment", "UNICODE_BOM", "UTF8_BOM", "UTF16_BOM", 
+			"UTF32_BOM"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'query'", "'mutation'", "'subscription'", "'{'", "'}'", "'('", 
-		"')'", "':'", "'...'", "'fragment'", "'on'", "'true'", "'false'", "'null'", 
-		"'['", "']'", "'$'", "'='", "'!'", "'@'", "'schema'", "'extend'", "'scalar'", 
-		"'type'", "'implements'", "'&'", "'interface'", "'union'", "'|'", "'enum'", 
-		"'input'", "'directive'", "'QUERY'", "'MUTATION'", "'SUBSCRIPTION'", "'FIELD'", 
-		"'FRAGMENT_DEFINITION'", "'FRAGMENT_SPREAD'", "'INLINE_FRAGMENT'", "'SCHEMA'", 
-		"'SCALAR'", "'OBJECT'", "'FIELD_DEFINITION'", "'ARGUMENT_DEFINITION'", 
-		"'INTERFACE'", "'UNION'", "'ENUM'", "'ENUM_VALUE'", "'INPUT_OBJECT'", 
-		"'INPUT_FIELD_DEFINITION'", null, null, null, null, null, null, null, 
-		null, "','", null, null, "'\uEFBBBF'", "'\uFEFF'", "'\u0000FEFF'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, "NAME", "STRING", "BLOCK_STRING", "ID", "FLOAT", "INT", 
-		"PUNCTUATOR", "WS", "COMMA", "LineComment", "UNICODE_BOM", "UTF8_BOM", 
-		"UTF16_BOM", "UTF32_BOM"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'query'", "'mutation'", "'subscription'", "'{'", "'}'", "'('", 
+			"')'", "':'", "'...'", "'fragment'", "'on'", "'true'", "'false'", "'null'", 
+			"'['", "']'", "'$'", "'='", "'!'", "'@'", "'schema'", "'extend'", "'scalar'", 
+			"'type'", "'implements'", "'&'", "'interface'", "'union'", "'|'", "'enum'", 
+			"'input'", "'directive'", "'QUERY'", "'MUTATION'", "'SUBSCRIPTION'", 
+			"'FIELD'", "'FRAGMENT_DEFINITION'", "'FRAGMENT_SPREAD'", "'INLINE_FRAGMENT'", 
+			"'SCHEMA'", "'SCALAR'", "'OBJECT'", "'FIELD_DEFINITION'", "'ARGUMENT_DEFINITION'", 
+			"'INTERFACE'", "'UNION'", "'ENUM'", "'ENUM_VALUE'", "'INPUT_OBJECT'", 
+			"'INPUT_FIELD_DEFINITION'", null, null, null, null, null, null, null, 
+			null, "','", null, null, "'\uEFBBBF'", "'\uFEFF'", "'\u0000FEFF'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, "NAME", "STRING", "BLOCK_STRING", "ID", "FLOAT", "INT", 
+			"PUNCTUATOR", "WS", "COMMA", "LineComment", "UNICODE_BOM", "UTF8_BOM", 
+			"UTF16_BOM", "UTF32_BOM"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

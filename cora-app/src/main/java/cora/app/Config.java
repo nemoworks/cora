@@ -3,14 +3,15 @@ package cora.app;
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.CoraRepository;
 import cora.datafetcher.CoraStorage;
-import cora.datafetcher.mongodb.CoraMongodb;
+import cora.datafetcher.CoraStorageImp;
 import cora.datafetcher.mongodb.MongodbCoraRepositoryImpl;
 import cora.parser.CoraParser;
-import cora.parser.JsonSchemaParser;
+import cora.parser.JSONSchemaParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import graphql.schema.DataFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -23,15 +24,19 @@ public class Config {
     @Autowired
     MongoTemplate mongoTemplate;
 
+
+    @Value("${cora.node.dataCollection}")
+    String collectionName;
+
     @Bean
     public CoraRepository<JSONObject> mongodbCoraRepository() {
-        return new MongodbCoraRepositoryImpl(mongoTemplate) {
+        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName) {
         };
     }
 
     @Bean
     public CoraStorage<JSONObject> coraMongodb() {
-        return new CoraMongodb(mongodbCoraRepository());
+        return new CoraStorageImp(mongodbCoraRepository());
     }
 
     @Bean
@@ -63,6 +68,6 @@ public class Config {
 
     @Bean
     public CoraParser coraParser() {
-        return new JsonSchemaParser();
+        return new JSONSchemaParser();
     }
 }
