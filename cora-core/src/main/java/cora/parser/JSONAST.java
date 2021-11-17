@@ -8,15 +8,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JsonAST {
+public class JSONAST {
+
+
 
     private Map<String, Object> map;
 
-//    public JsonAST() {
-//        this.map = new HashMap<>();
-//    }
-
-    protected JsonAST(JSONParser.ObjContext objCtx) {
+    protected JSONAST(JSONParser.ObjContext objCtx) {
         this.map = new HashMap<>();
         for (JSONParser.PairContext pairCtx : objCtx.pair()) {
             String key = pairCtx.STRING().getText();
@@ -24,12 +22,12 @@ public class JsonAST {
         }
     }
 
-    public JsonAST getJsonAST(String key) {
+    public JSONAST getJSONAST(String key) {
         JSONParser.ValueContext value = (JSONParser.ValueContext) map.get(key);
         if (value == null) {
             return null;
         }
-        return new JsonAST(value.obj());
+        return new JSONAST(value.obj());
     }
 
     public String getString(String key) {
@@ -73,12 +71,12 @@ public class JsonAST {
         map.put(key, object);
     }
 
-    public static JsonAST parseJSON(String text) {
+    public static JSONAST parseJSON(String text) {
         JSONLexer lexer = new JSONLexer(CharStreams.fromString(text));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JSONParser parser = new JSONParser(tokens);
         JSONParser.ObjContext objCtx = parser.obj();
-        return new JsonAST(objCtx);
+        return new JSONAST(objCtx);
     }
 
 

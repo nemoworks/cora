@@ -1,4 +1,6 @@
-package cora.antlr.json;// Generated from JSON.g4 by ANTLR 4.7.1
+package cora.antlr.json;
+
+// Generated from JSON.g4 by ANTLR 4.9.3
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

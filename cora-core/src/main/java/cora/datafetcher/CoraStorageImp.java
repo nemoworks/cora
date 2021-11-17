@@ -1,4 +1,4 @@
-package cora.datafetcher.mongodb;
+package cora.datafetcher;
 
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.CoraRepository;
@@ -10,30 +10,27 @@ import graphql.schema.GraphQLObjectType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoraMongodb implements CoraStorage<JSONObject> {
+public class CoraStorageImp implements CoraStorage<JSONObject> {
 
     private final CoraRepository<JSONObject> coraRepository;
 
-    public CoraMongodb( CoraRepository coraRepository) {
+    public CoraStorageImp(CoraRepository coraRepository) {
         this.coraRepository = coraRepository;
     }
 
-
-    private static final String collectionName = "jieshixing";
-
     @Override
     public DataFetcher<JSONObject> getFetcher() {
-        return dataFetcherEnvironment->{
+        return dataFetcherEnvironment -> {
             String id = dataFetcherEnvironment.getArgument("_id");
-            return coraRepository.queryNodeInstanceById(id,null);
+            return coraRepository.queryNodeInstanceById(id, null);
         };
     }
 
     @Override
     public DataFetcher<List<JSONObject>> getListFetcher() {
-        return dataFetcherEnvironment->{
-            String fieldType = ((GraphQLObjectType)((GraphQLList) dataFetcherEnvironment.getFieldType()).getWrappedType()).getName();
-            if(dataFetcherEnvironment.getSource()!=null){
+        return dataFetcherEnvironment -> {
+            String fieldType = ((GraphQLObjectType) ((GraphQLList) dataFetcherEnvironment.getFieldType()).getWrappedType()).getName();
+            if (dataFetcherEnvironment.getSource() != null) {
                 String name = dataFetcherEnvironment.getFieldDefinition().getName();
                 JSONObject source = dataFetcherEnvironment.getSource();
                 ArrayList<String> ids = source.getObject(name, ArrayList.class);
@@ -45,10 +42,10 @@ public class CoraMongodb implements CoraStorage<JSONObject> {
 
     @Override
     public DataFetcher<JSONObject> getCreator() {
-        return dataFetcherEnvironment->{
+        return dataFetcherEnvironment -> {
             JSONObject content = new JSONObject(dataFetcherEnvironment.getArgument("data"));
             String fieldType = ((GraphQLObjectType) dataFetcherEnvironment.getFieldType()).getName();
-            return coraRepository.createNodeInstance(fieldType,content);
+            return coraRepository.createNodeInstance(fieldType, content);
         };
     }
 

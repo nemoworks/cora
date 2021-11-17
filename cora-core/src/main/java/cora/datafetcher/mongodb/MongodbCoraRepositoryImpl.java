@@ -12,15 +12,16 @@ import java.util.List;
 public class MongodbCoraRepositoryImpl implements CoraRepository<JSONObject> {
 
     private final MongoTemplate mongoTemplate;
-    private static final String collectionName = "jieshixing";
+    private final String collectionName;
 
-    public MongodbCoraRepositoryImpl(MongoTemplate mongoTemplate) {
+    public MongodbCoraRepositoryImpl(MongoTemplate mongoTemplate, String mongoCollection) {
         this.mongoTemplate = mongoTemplate;
+        this.collectionName = mongoCollection;
     }
 
     @Override
     public JSONObject createNodeInstance(String nodeType, JSONObject data) {
-        data.put("nodeType",nodeType);
+        data.put("nodeType", nodeType);
         return mongoTemplate.insert(data, collectionName);
     }
 
@@ -46,7 +47,7 @@ public class MongodbCoraRepositoryImpl implements CoraRepository<JSONObject> {
     @Override
     public List<JSONObject> queryNodeInstanceList(List<String> instanceIds) {
         List<JSONObject> results = new ArrayList<>();
-        instanceIds.forEach(instanceId->{
+        instanceIds.forEach(instanceId -> {
             JSONObject temp = mongoTemplate.findById(instanceId, JSONObject.class, collectionName);
             results.add(temp);
         });
