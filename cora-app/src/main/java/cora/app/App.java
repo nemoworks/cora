@@ -29,38 +29,4 @@ public class App {
 
     @Autowired
     MongoTemplate mongoTemplate;
-
-    @Value("${cora.node.typeCollection}")
-    String collectionName;
-
-    @PostConstruct
-    public void graphNodeInitialization() throws IOException {
-        mongoTemplate.dropCollection(collectionName);
-        final String path = "classpath*:demo/jieshixing.json";
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Arrays.stream(resolver.getResources(path))
-                .parallel()
-                .forEach(resource -> {
-                    try {
-                        String fileName = resource.getFilename();
-                        InputStream input = resource.getInputStream();
-                        InputStreamReader reader = new InputStreamReader(input);
-                        BufferedReader br = new BufferedReader(reader);
-                        StringBuilder template = new StringBuilder();
-                        for (String line; (line = br.readLine()) != null; ) {
-                            template.append(line).append("\n");
-                        }
-                        JSONObject parseObject = JSON.parseObject(template.toString());
-                        parseObject.getInnerMap().keySet().forEach(key -> {
-                            JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
-//                            jsonObject.put("nodeType", StringUtil.upperCase(key));
-                            JSONObject coraNodeDefinition = new JSONObject();
-                            coraNodeDefinition.put("schemaDefinition", jsonObject.toString());
-                            mongoTemplate.insert(coraNodeDefinition, collectionName);
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-    }
 }

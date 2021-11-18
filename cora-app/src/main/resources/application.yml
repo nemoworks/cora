@@ -1,10 +1,18 @@
 server:
   port: 8000
+#spring:
+#  data:
+#    mongodb:
+#      uri: mongodb+srv://cora:l9s7K76m5y1LvjCV@coracluster.gh6kb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://cora:l9s7K76m5y1LvjCV@coracluster.gh6kb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-
+      authentication-database: test
+      username: my_user
+      password: password123
+      port: 27017
+      host: localhost
+      database: test
 
 cora:
   node:

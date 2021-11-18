@@ -1,11 +1,13 @@
 package cora.app;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.graph.CoraGraph;
 import cora.graph.CoraNode;
 import cora.parser.CoraParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
+import cora.util.StringUtil;
 import graphql.GraphQL;
 import graphql.language.Definition;
 import graphql.language.ObjectTypeDefinition;
@@ -13,9 +15,16 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 import static graphql.GraphQL.newGraphQL;
@@ -43,17 +52,54 @@ public class CoraBuilder {
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
 
 
+//    @Value("${cora.node.typeCollection}")
+//    String typeCollection;
+    public void graphNodeInitialization() {
+    //    mongoTemplate.dropCollection(collectionName);
+        final String path = "classpath*:demo/jieshixing.json";
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            Arrays.stream(resolver.getResources(path))
+                    .parallel()
+                    .forEach(resource -> {
+                        try {
+                            InputStream input = resource.getInputStream();
+                            InputStreamReader reader = new InputStreamReader(input);
+                            BufferedReader br = new BufferedReader(reader);
+                            StringBuilder template = new StringBuilder();
+                            for (String line; (line = br.readLine()) != null; ) {
+                                template.append(line).append("\n");
+                            }
+                            JSONObject parseObject = JSON.parseObject(template.toString());
+                            parseObject.getInnerMap().keySet().forEach(key -> {
+                                JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
+                                jsonObject.put("nodeType", StringUtil.upperCase(key));
+                                List<Definition> parse = coraParser.parseSchema(jsonObject.toString());
+                                CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
+                                CoraGraph.merge(node);
+                                this.addNewTypeAndDataFetcherInGraphQL(node);
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public GraphQL createGraphQL() {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
-        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
-        coraNodes.forEach(coraNode -> {
-            String schema = coraNode.getString("schemaDefinition");
-            List<Definition> parse = coraParser.parseSchema(schema);
-            CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
-            CoraGraph.mergeCoraNode(node);
-            this.addNewTypeAndDataFetcherInGraphQL(node);
-        });
+
+//        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
+//        coraNodes.forEach(coraNode -> {
+//            String schema = coraNode.getString("schemaDefinition");
+//            List<Definition> parse = coraParser.parseSchema(schema);
+//            CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
+//            CoraGraph.mergeCoraNode(node);
+//            this.addNewTypeAndDataFetcherInGraphQL(node);
+//        });
+        this.graphNodeInitialization();
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
