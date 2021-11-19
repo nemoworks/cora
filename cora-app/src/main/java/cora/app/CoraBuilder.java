@@ -13,13 +13,10 @@ import graphql.language.Definition;
 import graphql.language.ObjectTypeDefinition;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,19 +26,17 @@ import java.util.List;
 
 import static graphql.GraphQL.newGraphQL;
 
-@Component
 public class CoraBuilder {
-    @Autowired
+    final
     CoraRuntimeWiring coraRuntimeWiring;
 
-    @Autowired
+    final
     CoraTypeRegistry coraTypeRegistry;
 
-    @Autowired
+    final
     CoraParser coraParser;
 
-    @Autowired
-    MongoTemplate mongoTemplate;
+    final MongoTemplate mongoTemplate;
 
     @Value("${cora.node.typeCollection}")
     String collectionName;
@@ -51,8 +46,15 @@ public class CoraBuilder {
 
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
 
+    public CoraBuilder(CoraRuntimeWiring coraRuntimeWiring, CoraTypeRegistry coraTypeRegistry, CoraParser coraParser, MongoTemplate mongoTemplate) {
+        this.coraRuntimeWiring = coraRuntimeWiring;
+        this.coraTypeRegistry = coraTypeRegistry;
+        this.coraParser = coraParser;
+        this.mongoTemplate = mongoTemplate;
+    }
 
-//    @Value("${cora.node.typeCollection}")
+
+    //    @Value("${cora.node.typeCollection}")
 //    String typeCollection;
     public void graphNodeInitialization() {
     //    mongoTemplate.dropCollection(collectionName);

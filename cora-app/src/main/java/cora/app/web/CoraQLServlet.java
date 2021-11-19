@@ -1,6 +1,6 @@
-package cora.web;
+package cora.app.web;
 
-import cora.util.ServletUtil;
+import cora.app.servletutil.ServletUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CoraQLServlet extends HttpServlet {
-
 
     @Override
     public void init() throws ServletException {

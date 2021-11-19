@@ -3,22 +3,9 @@
  */
 package cora.app;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import cora.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 
 @SpringBootApplication
 public class App {
@@ -27,6 +14,4 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-    @Autowired
-    MongoTemplate mongoTemplate;
 }

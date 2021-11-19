@@ -1,10 +1,15 @@
-package cora.web;
+package cora.app.web;
 
+import cora.app.CoraBuilder;
 import cora.graph.CoraGraph;
-import cora.util.ServletUtil;
+import cora.graph.IngressType;
 import cora.util.VelocityTemplate;
+import graphql.GraphQL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,12 +17,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class RestApiServlet extends HttpServlet {
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-    }
+//    private final GraphQL graphQL;
+//
+//    public RestApiServlet(CoraBuilder coraBuilder) {
+//        this.graphQL = coraBuilder.createGraphQL();
+//    }
 
     protected void doGet(
             HttpServletRequest request,
@@ -26,7 +33,7 @@ public class RestApiServlet extends HttpServlet {
         String type = request.getParameter("type");
         String id = request.getParameter("id");
 
-        String a = CoraGraph.CoraIngressMap.get(type).getIngress().get(0).right;
+        String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.QUERY);
         Map<String,String> map = new HashMap<>();
         map.put("id",id);
         map.put("resp","_id");

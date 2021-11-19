@@ -46,6 +46,15 @@ public class CoraIngress {
         this.ingress = ingress;
     }
 
+    public String getIngressData(IngressType ingressType){
+        for (ImmutablePair<IngressType, String> ingressTypeStringImmutablePair : ingress) {
+            if (ingressTypeStringImmutablePair.left.equals(ingressType)) {
+                return ingressTypeStringImmutablePair.right;
+            }
+        }
+        return null;
+    }
+
     public static final class Builder{
         String name;
         List<ImmutablePair<IngressType,String>> ingress;

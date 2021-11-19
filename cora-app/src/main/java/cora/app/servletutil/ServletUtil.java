@@ -1,4 +1,4 @@
-package cora.util;
+package cora.app.servletutil;
 
 
 import javax.servlet.http.HttpServletRequest;

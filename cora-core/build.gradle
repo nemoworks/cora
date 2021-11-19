@@ -19,7 +19,4 @@ dependencies{
     implementation 'junit:junit:4.13.1'
     implementation 'junit:junit:4.13.1'
     implementation 'org.apache.commons:commons-lang3:3.10'
-    implementation 'org.eclipse.jetty:jetty-server:9.4.41.v20210516'
-    implementation 'org.eclipse.jetty:jetty-servlet:9.4.41.v20210516'
-
 }
