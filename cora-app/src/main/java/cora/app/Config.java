@@ -6,7 +6,7 @@ import cora.datafetcher.CoraStorage;
 import cora.datafetcher.CoraStorageImp;
 import cora.datafetcher.mongodb.MongodbCoraRepositoryImpl;
 import cora.parser.CoraParser;
-import cora.parser.JSONSchemaParser;
+import cora.parser.JsonSchemaParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import graphql.schema.DataFetcher;
@@ -68,6 +68,6 @@ public class Config {
 
     @Bean
     public CoraParser coraParser() {
-        return new JSONSchemaParser();
+        return new JsonSchemaParser();
     }
 }
