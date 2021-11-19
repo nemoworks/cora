@@ -1,0 +1,50 @@
+[
+  {
+    "type": "OBJECT",
+    "nodeType": "Bill",
+    "properties": {
+      "invoiceCompany": {
+        "type": "STRING",
+        "title": "公司名"
+      },
+      "saler": {
+        "$ref": "#/$defs/Saler"
+      }
+    }
+  },
+  {
+    "type": "OBJECT",
+    "properties": {
+      "invoiceCompany": {
+        "type": "STRING",
+        "title": "公司名"
+      },
+      "saler": {
+        "$ref": "#/$defs/Saler"
+      }
+    }
+  },
+  {
+    "nodeType": "Bill",
+    "properties": {
+      "invoiceCompany": {
+        "type": "STRING",
+        "title": "公司名"
+      },
+      "saler": {
+        "$ref": "#/$defs/Saler"
+      }
+    }
+  },
+  {
+    "type": "OBJECT",
+    "nodeType": "Bill"
+  },
+  {
+    "type": "OBJECT",
+    "nodeType": "Bill",
+    "properties": {
+      "type": "STRING"
+    }
+  }
+]
