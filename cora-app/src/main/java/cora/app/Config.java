@@ -16,6 +16,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.servlet.Servlet;
 import java.util.List;
 
 @Configuration
@@ -83,13 +85,10 @@ public class Config {
         return new CoraBuilder(coraRuntimeWiring(),coraTypeRegistry(),coraParser(),mongoTemplate);
     }
 
-//    @Bean
-//    public ServletRegistrationBean exampleServletBean() {
-//        ServletRegistrationBean bean = new ServletRegistrationBean(
-//                new RestApiServlet(coraBuilder()), "/api/*");
-//        bean.setLoadOnStartup(1);
-//        return bean;
-//    }
+    @Bean
+    public Servlet servlet() {
+        return new RestApiServlet(coraBuilder());
+    }
 
     @Bean
     public Server getServer() throws Exception {
@@ -98,7 +97,10 @@ public class Config {
         connector.setPort(8090);
         server.setConnectors(new Connector[] {connector});
         ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServletWithMapping(RestApiServlet.class,"/api/*");
+        ServletHolder servletHolder = new ServletHolder();
+        servletHolder.setServlet(servlet());
+        servletHandler.addServletWithMapping(servletHolder,"/api/*");
+        //servletHandler.addServletWithMapping(RestApiServlet.class,"/api/*");
         servletHandler.addServletWithMapping(CoraQLServlet.class,"/coraql");
         server.setHandler(servletHandler);
         server.start();

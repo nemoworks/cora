@@ -93,14 +93,13 @@ public class CoraBuilder {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
 
-//        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
-//        coraNodes.forEach(coraNode -> {
-//            String schema = coraNode.getString("schemaDefinition");
-//            List<Definition> parse = coraParser.parseSchema(schema);
-//            CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
-//            CoraGraph.mergeCoraNode(node);
-//            this.addNewTypeAndDataFetcherInGraphQL(node);
-//        });
+        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
+        coraNodes.forEach(coraNode -> {
+            String schema = coraNode.getString("schemaDefinition");
+            List<Definition> parse = coraParser.parseSchema(schema);
+            String nodeName = CoraGraph.merge(parse);
+            this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
+        });
         this.graphNodeInitialization();
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()

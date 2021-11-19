@@ -1,15 +1,14 @@
 package cora.app.web;
 
+import com.alibaba.fastjson.JSON;
 import cora.app.CoraBuilder;
 import cora.graph.CoraGraph;
 import cora.graph.IngressType;
 import cora.util.VelocityTemplate;
+import graphql.ExecutionResult;
 import graphql.GraphQL;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,11 +19,16 @@ import java.util.Map;
 
 public class RestApiServlet extends HttpServlet {
 
-//    private final GraphQL graphQL;
-//
-//    public RestApiServlet(CoraBuilder coraBuilder) {
-//        this.graphQL = coraBuilder.createGraphQL();
-//    }
+    private final GraphQL graphQL;
+
+    public RestApiServlet(CoraBuilder coraBuilder) {
+        this.graphQL = coraBuilder.createGraphQL();
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+    }
 
     protected void doGet(
             HttpServletRequest request,
@@ -37,10 +41,13 @@ public class RestApiServlet extends HttpServlet {
         Map<String,String> map = new HashMap<>();
         map.put("id",id);
         map.put("resp","_id");
-        String build = VelocityTemplate.build(a, map);
+        String schema = VelocityTemplate.build(a, map);
+        ExecutionResult result = graphQL.execute(schema);
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("{ \"status\": \"ok\"}");
+        response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JSON.toJSONString(result.getData()));
     }
 
     @Override
