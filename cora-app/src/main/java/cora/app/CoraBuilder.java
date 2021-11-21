@@ -41,7 +41,6 @@ public class CoraBuilder {
     @Value("${cora.node.typeCollection}")
     String collectionName;
 
-
     private GraphQLSchema graphQLSchema;
 
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
@@ -53,11 +52,8 @@ public class CoraBuilder {
         this.mongoTemplate = mongoTemplate;
     }
 
-
-    //    @Value("${cora.node.typeCollection}")
-//    String typeCollection;
+    // load json objects in /resources/demo/jieshixing.json to initial cora
     public void graphNodeInitialization() {
-    //    mongoTemplate.dropCollection(collectionName);
         final String path = "classpath*:demo/jieshixing.json";
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
@@ -88,6 +84,8 @@ public class CoraBuilder {
             e.printStackTrace();
         }
     }
+
+    //initial
     public GraphQL createGraphQL() {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
@@ -106,10 +104,12 @@ public class CoraBuilder {
         return newGraphQL(graphQLSchema).build();
     }
 
+    //add new coraNode in runtime context
     private void addNewTypeAndDataFetcherInGraphQL(CoraNode coraNode) {
         coraTypeRegistry.addGraphNode(coraNode);
         coraRuntimeWiring.addNewSchemaDataFetcher(coraNode);
     }
+
 
     public GraphQL addTypeInGraphQL(String schema) {
         List<Definition> parse = coraParser.parseSchema(schema);

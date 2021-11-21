@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//graphql api impl
 public class CoraQLServlet extends HttpServlet {
 
     private final GraphQL graphQL;

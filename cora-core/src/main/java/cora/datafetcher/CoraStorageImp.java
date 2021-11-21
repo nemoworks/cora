@@ -1,8 +1,6 @@
 package cora.datafetcher;
 
 import com.alibaba.fastjson.JSONObject;
-import cora.datafetcher.CoraRepository;
-import cora.datafetcher.CoraStorage;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
