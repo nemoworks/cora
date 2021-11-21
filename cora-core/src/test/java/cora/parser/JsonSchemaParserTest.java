@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JsonSchemaParserTest {
 
-    JsonSchemaParser jsonSchemaParser;
+    JSONSchemaParser jsonSchemaParser;
 
     // a normal schema with $ref
     private final String schema1 = "{\n" +
@@ -73,7 +73,7 @@ class JsonSchemaParserTest {
 
     @BeforeEach
     void setUp() {
-        jsonSchemaParser = new JsonSchemaParser();
+        jsonSchemaParser = new JSONSchemaParser();
     }
 
     @AfterEach
