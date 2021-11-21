@@ -77,9 +77,8 @@ public class CoraBuilder {
                                 JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
                                 jsonObject.put("nodeType", StringUtil.upperCase(key));
                                 List<Definition> parse = coraParser.parseSchema(jsonObject.toString());
-                                CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
-                                CoraGraph.merge(node);
-                                this.addNewTypeAndDataFetcherInGraphQL(node);
+                                String nodeName = CoraGraph.merge(parse);
+                                this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
                             });
                         } catch (Exception e) {
                             e.printStackTrace();

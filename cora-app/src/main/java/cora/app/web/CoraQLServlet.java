@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CoraQLServlet extends HttpServlet {
+    private final GraphQL graphQL;
+
+    public CoraQLServlet(CoraBuilder coraBuilder) {
+        this.graphQL = coraBuilder.createGraphQL();
+    }
+
 
     private final GraphQL graphQL;
 

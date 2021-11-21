@@ -30,25 +30,32 @@ public class RestApiServlet extends HttpServlet {
         super.init();
     }
 
+    @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
+        String coraQL = null;
         String type = request.getParameter("type");
-        String id = request.getParameter("id");
 
-        String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.QUERY);
-        Map<String,String> map = new HashMap<>();
-        map.put("id",id);
-        map.put("resp","_id");
-        String schema = VelocityTemplate.build(a, map);
-        ExecutionResult result = graphQL.execute(schema);
+        if(!request.getParameterMap().keySet().contains("id")){
+            coraQL = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.QUERY_LIST);
+        }else{
+            String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.QUERY);
+            String id = request.getParameter("id");
+            Map<String,String> map = new HashMap<>();
+            map.put("id",id);
+            map.put("resp","_id");
+            coraQL = VelocityTemplate.build(a, map);
+        }
+        ExecutionResult result = graphQL.execute(coraQL);
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(JSON.toJSONString(result.getData()));
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

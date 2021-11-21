@@ -17,10 +17,10 @@ public class CoraGraph {
     public CoraGraph() {
     }
 
-    public static String merge(List<Definition> definitions){
+    public synchronized static String merge(List<Definition> definitions){
         CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) definitions.get(0)).build();
-        CoraIngress ingress = new CoraIngress.Builder(node.getName()).build();
         CoraNodeMap.put(node.getName(),node);
+        CoraIngress ingress = new CoraIngress.Builder(node.getName()).build();
         CoraIngressMap.put(node.getName(),ingress);
         return node.getName();
     }
