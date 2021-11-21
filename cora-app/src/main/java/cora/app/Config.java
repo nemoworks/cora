@@ -19,7 +19,6 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,12 +36,20 @@ public class Config {
     @Value("${cora.node.dataCollection}")
     String collectionName;
 
+    /**
+     * mongodb storage repository impl
+     * @return
+     */
     @Bean
     public CoraRepository<JSONObject> mongodbCoraRepository() {
         return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName) {
         };
     }
 
+    /**
+     * storage object
+     * @return
+     */
     @Bean
     public CoraStorage<JSONObject> coraMongodb() {
         return new CoraStorageImp(mongodbCoraRepository());
