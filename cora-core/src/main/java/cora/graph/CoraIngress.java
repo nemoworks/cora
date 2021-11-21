@@ -60,10 +60,10 @@ public class CoraIngress {
         List<ImmutablePair<IngressType,String>> ingress;
         protected Builder(String nodeName){
             this.name = nodeName;
-            ingress = new ArrayList<ImmutablePair<IngressType,String>>();
-            ingress.add(new ImmutablePair<IngressType,String>(IngressType.QUERY,IngressTemplate.getQueryTemplate(nodeName)));
-            // ingress.add(new ImmutablePair<String, IngressType>(GQLTemplate.queryInstanceList(nodeName), IngressType.QUERY));
-            // ingress.add(new ImmutablePair<String, IngressType>(GQLTemplate.createNodeInstance(nodeName), IngressType.MUTATION));
+            ingress = new ArrayList<>();
+            ingress.add(new ImmutablePair<>(IngressType.QUERY, IngressTemplate.getQueryTemplate(nodeName)));
+            ingress.add(new ImmutablePair<>(IngressType.QUERY_LIST,IngressTemplate.getQueryListTemplate(nodeName)));
+            ingress.add(new ImmutablePair<>(IngressType.MUTATION, IngressTemplate.getCreateTemplate(nodeName)));
         }
 
         public CoraIngress build(){

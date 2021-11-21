@@ -86,8 +86,13 @@ public class Config {
     }
 
     @Bean
-    public Servlet servlet() {
+    public Servlet restServlet() {
         return new RestApiServlet(coraBuilder());
+    }
+
+    @Bean
+    public Servlet graphqlServlet() {
+        return new CoraQLServlet(coraBuilder());
     }
 
     @Bean
@@ -98,10 +103,13 @@ public class Config {
         server.setConnectors(new Connector[] {connector});
         ServletHandler servletHandler = new ServletHandler();
         ServletHolder servletHolder = new ServletHolder();
-        servletHolder.setServlet(servlet());
+        servletHolder.setServlet(restServlet());
+        ServletHolder servletHolder1 = new ServletHolder();
+        servletHolder1.setServlet(graphqlServlet());
+
         servletHandler.addServletWithMapping(servletHolder,"/api/*");
         //servletHandler.addServletWithMapping(RestApiServlet.class,"/api/*");
-        servletHandler.addServletWithMapping(CoraQLServlet.class,"/coraql");
+        servletHandler.addServletWithMapping(servletHolder1,"/graphql");
         server.setHandler(servletHandler);
         server.start();
         return server;

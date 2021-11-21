@@ -19,4 +19,5 @@ dependencies{
     implementation 'junit:junit:4.13.1'
     implementation 'junit:junit:4.13.1'
     implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
 }
