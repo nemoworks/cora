@@ -3,6 +3,7 @@ package cora.datafetcher.relational;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.CoraRepository;
+import cora.util.VelocityTemplate;
 import org.postgresql.util.PGobject;
 
 import java.io.BufferedReader;
@@ -12,15 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> {
 
-    private final String collectionName;
     private Connection connection;
+    private final String collectionName;
+    private final String QUERY_TEMPLATE = "SELECT * FROM ${collectionName} WHERE ${searchVar} = ?;";
+    private final String INSERT_TEMPLATE = "INSERT INTO ${collectionName}(nodetype, data) VALUES(?, ?)";
 
     public RelationalCoraRepositoryImpl(String collectionName) {
         this.collectionName = collectionName;
@@ -38,12 +38,15 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     @Override
     public JSONObject createNodeInstance(String nodeType, JSONObject data) {
-        String query = "INSERT INTO " + collectionName + "(nodetype, data) VALUES(?, ?)";
+        Map<String, String> map = new HashMap<>();
+        map.put("collectionName", collectionName);
+        String query = VelocityTemplate.build(INSERT_TEMPLATE, map);
+
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             PGobject pGobject = new PGobject();
             pGobject.setType("json");
             pGobject.setValue(data.toString());
-            pst.setObject(1, nodeType);
+            pst.setString(1, nodeType);
             pst.setObject(2, pGobject);
             pst.executeUpdate();
 
@@ -62,7 +65,11 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     @Override
     public JSONObject queryNodeInstanceById(String id, String nodeType) {
-        String query = "SELECT * FROM " + collectionName + " WHERE _id=?";
+        Map<String,String> map = new HashMap<>();
+        map.put("collectionName",collectionName);
+        map.put("searchVar","_id");
+        String query = VelocityTemplate.build(QUERY_TEMPLATE, map);
+
         JSONObject jsonObject = new JSONObject();
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             PGobject idPGobject = new PGobject();
@@ -85,7 +92,11 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     @Override
     public List<JSONObject> queryNodeInstanceList(String nodeType) {
-        String query = "SELECT * FROM " + collectionName + " WHERE nodetype=?";
+        Map<String,String> map = new HashMap<>();
+        map.put("collectionName",collectionName);
+        map.put("searchVar","nodetype");
+        String query = VelocityTemplate.build(QUERY_TEMPLATE, map);
+
         List<JSONObject> jsonObjectList = new ArrayList<>();
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             pst.setString(1, nodeType);
@@ -105,9 +116,13 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     @Override
     public List<JSONObject> queryNodeInstanceList(List<String> instanceIds) {
+        Map<String,String> map = new HashMap<>();
+        map.put("collectionName",collectionName);
+        map.put("searchVar","_id");
+        String query = VelocityTemplate.build(QUERY_TEMPLATE, map);
+
         List<JSONObject> jsonObjectList = new ArrayList<>();
         instanceIds.forEach(instanceId -> {
-            String query = "SELECT * FROM " + collectionName + " WHERE _id=?";
             JSONObject jsonObject = new JSONObject();
             try (PreparedStatement pst = connection.prepareStatement(query)) {
                 PGobject idPGobject = new PGobject();
