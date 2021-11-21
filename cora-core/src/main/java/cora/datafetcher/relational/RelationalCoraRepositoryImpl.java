@@ -51,6 +51,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
             e.printStackTrace();
             return null;
         }
+        data.put("nodeType", nodeType);
         return data;
     }
 
@@ -153,10 +154,10 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
         JSONObject data = (JSONObject) JSON.parse(jsonString);
 
         RelationalCoraRepositoryImpl relationalCoraRepository = new RelationalCoraRepositoryImpl("jieshixing");
-//        relationalCoraRepository.createNodeInstance("Bill", data);
+        relationalCoraRepository.createNodeInstance("Bill", data);
 //        relationalCoraRepository.queryNodeInstanceById("96de44f5-e4b2-48ee-99aa-4fc9f86d2bd4", "Bill");
 //        relationalCoraRepository.queryNodeInstanceList("Bill");
-        relationalCoraRepository.queryNodeInstanceList(instaceIds);
+//        relationalCoraRepository.queryNodeInstanceList(instaceIds);
 
     }
 }

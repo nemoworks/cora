@@ -7,6 +7,7 @@ import cora.datafetcher.CoraRepository;
 import cora.datafetcher.CoraStorage;
 import cora.datafetcher.CoraStorageImp;
 import cora.datafetcher.mongodb.MongodbCoraRepositoryImpl;
+import cora.datafetcher.relational.RelationalCoraRepositoryImpl;
 import cora.parser.CoraParser;
 import cora.parser.JsonSchemaParser;
 import cora.schema.CoraRuntimeWiring;
@@ -39,8 +40,8 @@ public class Config {
 
     @Bean
     public CoraRepository<JSONObject> mongodbCoraRepository() {
-        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName) {
-        };
+//        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName) {
+        return new RelationalCoraRepositoryImpl(collectionName);
     }
 
     @Bean
