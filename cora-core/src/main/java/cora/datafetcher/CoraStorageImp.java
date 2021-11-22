@@ -1,8 +1,6 @@
 package cora.datafetcher;
 
 import com.alibaba.fastjson.JSONObject;
-import cora.datafetcher.CoraRepository;
-import cora.datafetcher.CoraStorage;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
@@ -21,6 +19,12 @@ public class CoraStorageImp implements CoraStorage<JSONObject> {
     @Override
     public DataFetcher<JSONObject> getFetcher() {
         return dataFetcherEnvironment -> {
+            if(dataFetcherEnvironment.getSource()!=null){
+                String name = dataFetcherEnvironment.getFieldDefinition().getName();
+                JSONObject source = dataFetcherEnvironment.getSource();
+                ArrayList<String> ids = source.getObject(name, ArrayList.class);
+                return coraRepository.queryNodeInstanceById(ids.get(0),null);
+            }
             String id = dataFetcherEnvironment.getArgument("_id");
             return coraRepository.queryNodeInstanceById(id, null);
         };

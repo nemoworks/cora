@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 
-public class JSONSchemaParser implements CoraParser {
+public class JsonSchemaParser implements CoraParser {
 
     public enum JSONSchemaType {
         STRING, DATE, NUMBER, OBJECT, ARRAY
@@ -153,7 +153,7 @@ public class JSONSchemaParser implements CoraParser {
                 "      }\n" +
                 "    }\n" +
                 "  }";
-        JSONSchemaParser jsonSchemaParser = new JSONSchemaParser();
+        JsonSchemaParser jsonSchemaParser = new JsonSchemaParser();
         List<Definition> definitions = jsonSchemaParser.parseSchema(s);
         System.out.println("definitions");
     }

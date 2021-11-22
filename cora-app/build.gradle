@@ -6,10 +6,13 @@ plugins {
     id 'cora.java-application-conventions'
 }
 
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.2.5.RELEASE'
+    implementation 'org.eclipse.jetty:jetty-server:9.4.41.v20210516'
+    implementation 'org.eclipse.jetty:jetty-servlet:9.4.41.v20210516'
+    implementation 'org.springframework.boot:spring-boot-starter:2.2.5.RELEASE'
     implementation 'org.springframework:spring-context:5.3.12'
-    implementation 'com.graphql-java:graphql-java:17.3'
+    implementation 'com.graphql-java:graphql-java:16.2'
     implementation 'org.springframework.data:spring-data-mongodb:2.2.5.RELEASE'
     implementation 'com.alibaba:fastjson:1.2.75'
     implementation project(':cora-core')
