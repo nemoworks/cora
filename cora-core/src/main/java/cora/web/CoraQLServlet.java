@@ -1,8 +1,8 @@
-package cora.app.web;
+package cora.web;
 
 import com.alibaba.fastjson.JSON;
-import cora.app.CoraBuilder;
-import cora.app.servletutil.ServletUtil;
+import cora.CoraBuilder;
+import cora.util.ServletUtil;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 

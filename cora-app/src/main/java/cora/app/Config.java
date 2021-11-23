@@ -1,13 +1,13 @@
 package cora.app;
 
 import com.alibaba.fastjson.JSONObject;
-import cora.app.web.CoraQLServlet;
-import cora.app.web.RestApiServlet;
+import cora.CoraBuilder;
+import cora.web.CoraQLServlet;
+import cora.web.RestApiServlet;
 import cora.datafetcher.CoraRepository;
 import cora.datafetcher.CoraStorage;
 import cora.datafetcher.CoraStorageImp;
 import cora.datafetcher.mongodb.MongodbCoraRepositoryImpl;
-import cora.datafetcher.relational.RelationalCoraRepositoryImpl;
 import cora.parser.CoraParser;
 import cora.parser.JsonSchemaParser;
 import cora.schema.CoraRuntimeWiring;

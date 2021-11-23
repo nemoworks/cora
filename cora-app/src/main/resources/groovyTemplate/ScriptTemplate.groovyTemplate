@@ -1,0 +1,11 @@
+package cora.datafetcher.custom;
+
+import com.alibaba.fastjson.JSONObject;
+import java.util.*;
+
+public class ${className} implements CustomCoraRepository{
+    @Override
+    public JSONObject resolve(JSONObject fields, StorageHelper storageHelper, String coreNodeType) {
+        ${customCode}
+    }
+}
