@@ -17,7 +17,7 @@ import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 public class JsonSchemaParser implements CoraParser {
 
     public enum JSONSchemaType {
-        STRING, DATE, NUMBER, OBJECT, ARRAY
+        string, date, number, object, array
     }
 
     @Override
@@ -108,13 +108,13 @@ public class JsonSchemaParser implements CoraParser {
                 } else {
                     JSONSchemaType type = JSONSchemaType.valueOf(propertiesJsonAST.getString("type"));
                     switch (type) {
-                        case STRING:
+                        case string:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("String")));
                             break;
-                        case NUMBER:
+                        case number:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("Int")));
                             break;
-                        case DATE:
+                        case date:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("Date")));
                             break;
                         default:

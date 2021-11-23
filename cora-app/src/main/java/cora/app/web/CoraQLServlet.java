@@ -27,6 +27,7 @@ public class CoraQLServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String schema = ServletUtil.getRequestBody(req);
         ExecutionResult result = graphQL.execute(schema);
         response.setContentType("application/json");
@@ -34,6 +35,9 @@ public class CoraQLServlet extends HttpServlet {
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
-        response.getWriter().write(JSON.toJSONString(result.getData()));
+        if (result.getErrors().isEmpty())
+            response.getWriter().write(JSON.toJSONString(result.getData()));
+        else response.getWriter().write(JSON.toJSONString(result.getErrors()));
+
     }
 }
