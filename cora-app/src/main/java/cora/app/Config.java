@@ -43,8 +43,8 @@ public class Config {
      */
     @Bean
     public CoraRepository<JSONObject> mongodbCoraRepository() {
-//        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName) {
-        return new RelationalCoraRepositoryImpl(collectionName);
+        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName);
+//        return new RelationalCoraRepositoryImpl(collectionName);
     }
 
     /**
@@ -116,7 +116,6 @@ public class Config {
         servletHolder1.setServlet(graphqlServlet());
 
         servletHandler.addServletWithMapping(servletHolder,"/api/*");
-        //servletHandler.addServletWithMapping(RestApiServlet.class,"/api/*");
         servletHandler.addServletWithMapping(servletHolder1,"/graphql");
         server.setHandler(servletHandler);
         server.start();

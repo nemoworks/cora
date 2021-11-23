@@ -1,232 +1,251 @@
 {
   "saler": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "Saler",
     "properties": {
+      "salerId": {
+        "title": "编号",
+        "type": "string"
+      },
       "name": {
-      "type": "STRING",
-      "title": "姓名"
+        "type": "string",
+        "title": "名称"
       }
     }
   },
-  "bill": {
-    "type": "OBJECT",
-    "nodeType": "Bill",
+  "customerExpense": {
+    "type": "object",
+    "nodeType": "CustomerExpense",
     "properties": {
-      "invoiceCompany": {
-        "type": "STRING",
-        "title": "公司名"
+      "customerExpenseId": {
+        "title": "编号",
+        "type": "string"
       },
-      "invoiceDate": {
-        "type": "STRING",
-        "title": "日期"
-      },
-      "saler": {
-        "$ref": "#/$defs/Saler"
-      },
-      "arriveDate": {
-        "type": "STRING",
-        "title": "日期"
-      },
-      "isPaybackEnd": {
-        "type": "STRING",
-        "title": "是"
-      },
-      "amount": {
-        "type": "STRING",
-        "title": "是"
-      }
-    }
-  },
-  "customerExpenditure": {
-    "type": "OBJECT",
-    "nodeType": "CustomerExpenditure",
-    "properties": {
       "date": {
-        "type": "STRING",
-        "title": "日期"
+        "title": "日期",
+        "type": "string"
       },
       "amount": {
-        "type": "STRING",
-        "title": "数量"
+        "title": "金额",
+        "type": "number"
       },
       "isCash": {
-        "type": "STRING",
-        "title": "是"
+        "title": "是否现金",
+        "type": "string",
+        "enum": [
+          "是",
+          "否"
+        ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       }
     }
   },
-  "salerExpenditure": {
-    "type": "OBJECT",
-    "nodeType": "SalerExpenditure",
+  "salerExpense": {
+    "type": "object",
+    "nodeType": "SalerExpense",
     "properties": {
       "date": {
-        "type": "STRING",
-        "title": "日期"
+        "title": "日期",
+        "type": "string"
       },
       "amount": {
-        "type": "STRING",
-        "title": "数量"
+        "title": "金额",
+        "type": "number"
       },
       "isCash": {
-        "type": "STRING",
-        "title": "是"
+        "title": "是否现金",
+        "type": "string",
+        "enum": [
+          "否",
+          "是"
+        ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       },
       "type": {
-        "type": "STRING",
+        "type": "string",
         "title": "类型"
       },
       "saler": {
-        "$ref": "#/$defs/Saler"
+        "$ref": "#/$defs/saler",
+        "title": "销售人员",
+        "key": "salerId",
+        "value":"name",
+        "source": "http://localhost:3000/salers"
+      },
+      "salerExpenseId": {
+        "type": "string",
+        "title": "编号"
       }
     }
   },
   "deposit": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "Deposit",
     "properties": {
       "saler": {
-        "$ref": "#/$defs/Saler"
+        "$ref": "#/$defs/saler",
+        "title": "销售人员",
+        "key": "salerId",
+        "value":"name",
+        "source": "http://localhost:3000/salers"
       },
       "customer": {
-        "type": "STRING",
+        "type": "string",
         "title": "客户名称"
       },
       "date": {
-        "type": "STRING",
+        "type": "string",
         "title": "到账时间"
       },
-      "bill": {
-        "$ref": "#/$defs/Bill"
+      "invoice": {
+        "$ref": "#/$defs/invoice",
+        "title": "发票号",
+        "key": "invoiceId",
+        "value":"invoiceId",
+        "source": "http://localhost:3000/invoices"
       },
-      "expenditures": {
-        "type": "ARRAY",
+      "customerExpenses": {
+        "type": "array",
         "title": "客户开支集合",
         "items": {
-          "$ref": "#/$defs/CustomerExpenditure"
+          "$ref": "#/$defs/customerExpense",
+          "title": "客户开支",
+          "key": "customerExpenseId",
+          "value":"customerExpenseId",
+          "source": "http://localhost:3000/customerExpenses"
         }
       }
     }
   },
   "cash": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "Cash",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       }
     }
   },
   "grossProfit": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "GrossProfit",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       },
-      "salerExpenditures":{
-        "title":"销售支出集合",
-        "type":"ARRAY",
-        "items":{
-          "$ref":"#/$defs/SalerExpenditure"
+      "salerExpenses": {
+        "title": "销售支出集合",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/salerExpense",
+          "title": "销售支出",
+          "key": "salerExpenseId",
+          "value": "salerExpenseId",
+          "source": "http://localhost:3000/salerExpenses"
         }
       },
-      "saler":{
-        "$ref":"#/$defs/Saler"
+      "saler": {
+        "$ref": "#/$defs/saler",
+        "title": "销售人员",
+        "key": "salerId",
+        "value":"name",
+        "source": "http://localhost:3000/salers"
       }
     }
   },
-  "companyPayment": {
-    "type": "OBJECT",
-    "nodeType": "CompanyPayment",
+  "companyExpense":  {
+    "type": "object",
+    "nodeType": "CompanyExpense",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       },
       "isCash": {
         "title": "是否现金",
-        "type": "STRING",
-        "enum":[
+        "type": "string",
+        "enum": [
           "否",
           "是"
         ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       },
       "type": {
-        "type": "STRING",
+        "type": "string",
         "title": "类型"
       }
     }
   },
   "margin": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "Margin",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       },
       "isCash": {
         "title": "是否现金",
-        "type": "STRING",
-        "enum":[
+        "type": "string",
+        "enum": [
           "否",
           "是"
         ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       },
       "type": {
-        "type": "STRING",
+        "type": "string",
         "title": "类型"
       },
       "saler": {
-        "$ref": "#/$defs/Saler"
+        "$ref": "#/$defs/saler",
+        "title": "销售人员",
+        "key": "salerId",
+        "value":"name",
+        "source": "http://localhost:3000/salers"
       },
-      "receiveDate":{
-        "title":"收回时间",
-        "type":"STRING"
+      "receiveDate": {
+        "title": "收回时间",
+        "type": "string"
       },
-      "usage":{
-        "title":"用途",
-        "type":"STRING"
+      "usage": {
+        "title": "用途",
+        "type": "string"
       },
-      "isBalance":{
-        "title":"是否已平",
-        "type":"STRING",
-        "enum":[
+      "isBalance": {
+        "title": "是否已平",
+        "type": "string",
+        "enum": [
           "否",
           "是"
         ]
@@ -234,79 +253,124 @@
     }
   },
   "cashSalary": {
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "CashSalary",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       },
       "isCash": {
         "title": "是否现金",
-        "type": "STRING",
-        "enum":[
+        "type": "string",
+        "enum": [
           "否",
           "是"
         ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       },
       "type": {
-        "type": "STRING",
+        "type": "string",
         "title": "类型"
       }
     }
   },
   "administrativeCost": {
-    "type": "OBJECT",
-    "nodeType": "AdministrativeCost",
+    "type": "object",
+    "nodeType": "AdministrativeExpense",
     "properties": {
       "date": {
         "title": "日期",
-        "type": "STRING"
+        "type": "string"
       },
       "amount": {
         "title": "金额",
-        "type": "STRING"
+        "type": "number"
       },
       "isCash": {
         "title": "是否现金",
-        "type": "STRING",
-        "enum":[
+        "type": "string",
+        "enum": [
           "否",
           "是"
         ]
       },
       "appendix": {
-        "type": "STRING",
+        "type": "string",
         "title": "备注"
       },
       "type": {
-        "type": "STRING",
+        "type": "string",
         "title": "类型"
       }
     }
   },
+  "invoice":{
+    "type": "object",
+    "nodeType": "Invoice",
+    "properties": {
+      "invoiceId": {
+        "title": "发票号",
+        "type": "string"
+      },
+      "invoiceCompany": {
+        "type": "string",
+        "title": "开票公司"
+      },
+      "invoiceDate": {
+        "type": "string",
+        "title": "开票时间"
+      },
+      "saler": {
+        "$ref": "#/$defs/saler",
+        "title": "销售人员",
+        "key": "salerId",
+        "value":"name",
+        "source": "http://localhost:3000/salers"
+      },
+      "arriveDate": {
+        "title": "到账时间",
+        "type": "string"
+      },
+      "isPaybackEnd": {
+        "title": "是否回款结束",
+        "type": "string",
+        "enum": [
+          "是",
+          "否"
+        ]
+      },
+      "amount": {
+        "title": "金额",
+        "type": "number"
+      }
+    }
+  },
   "payback":{
-    "type": "OBJECT",
+    "type": "object",
     "nodeType": "Payback",
     "properties": {
-      "billId":{
-        "$ref":"#/$defs/Bill"
+      "invoice": {
+        "$ref": "#/$defs/invoice",
+        "title": "发票号",
+        "key": "invoiceId",
+        "value":"invoiceId",
+        "source": "http://localhost:3000/invoices"
       },
-      "date":{
-        "type":"STRING",
-        "title":"时间"
+      "date": {
+        "type": "string",
+        "title": "时间"
       },
-      "amount":{
-        "title":"金额",
-        "type":"STRING"
+      "amount": {
+        "title": "金额",
+        "type": "number"
       }
     }
   }
