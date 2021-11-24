@@ -3,6 +3,7 @@ package cora.app;
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
 import cora.web.CoraQLServlet;
+import cora.web.K8sServlet;
 import cora.web.RestApiServlet;
 import cora.datafetcher.CoraRepository;
 import cora.datafetcher.CoraStorage;
@@ -104,19 +105,30 @@ public class Config {
     }
 
     @Bean
+    public Servlet k8sServlet(){
+        return new K8sServlet();
+    }
+
+    @Bean
     public Server getServer() throws Exception {
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8090);
         server.setConnectors(new Connector[] {connector});
         ServletHandler servletHandler = new ServletHandler();
+
         ServletHolder servletHolder = new ServletHolder();
         servletHolder.setServlet(restServlet());
+
         ServletHolder servletHolder1 = new ServletHolder();
         servletHolder1.setServlet(graphqlServlet());
 
-        servletHandler.addServletWithMapping(servletHolder,"/api/*");
+        ServletHolder servletHolder2 = new ServletHolder();
+        servletHolder2.setServlet(k8sServlet());
+
+        servletHandler.addServletWithMapping(servletHolder,"/restapi/*");
         servletHandler.addServletWithMapping(servletHolder1,"/graphql");
+        servletHandler.addServletWithMapping(servletHolder2,"/api/healthz");
         server.setHandler(servletHandler);
         server.start();
         return server;

@@ -4,6 +4,7 @@
 
 plugins {
     id 'cora.java-application-conventions'
+    id "org.springframework.boot" version "2.4.5"
 }
 
 
