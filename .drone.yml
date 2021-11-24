@@ -1,0 +1,128 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+trigger:
+  branch:
+    - master
+    - main
+  event:
+    - push
+    - promote
+
+clone:
+  disable: true
+
+steps:
+  - name: git-clone
+    image: alpine/git
+    environment:
+      HTTP_PROXY:
+        from_secret: prod_http_proxy
+      HTTPS_PROXY:
+        from_secret: prod_https_proxy
+    commands:
+      - git clone ${DRONE_GIT_HTTP_URL} --depth 4 .
+      - git checkout ${DRONE_COMMIT}
+
+  - name: restore-cache
+    image: meltwater/drone-cache
+    settings:
+      backend: filesystem
+      restore: true
+      cache_key: '{{ .Repo.Name }}_{{ arch }}_{{ os }}'
+      mount:
+        - /root/.gradle
+    volumes:
+      - name: cache
+        path: /tmp/cache
+      - name: gradle
+        path: /root/.gradle
+
+  - name: build
+    image: gradle:7.2-jdk11
+    volumes:
+      - name: gradle
+        path: /root/.gradle
+    commands:
+      - mkdir -p ~/.gradle
+      - |
+        cat > ~/.gradle/init.gradle <<EOF
+        allprojects {
+          repositories {
+              maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
+              maven { url 'https://maven.aliyun.com/repository/central' }
+              maven { url 'https://maven.aliyun.com/repository/jcenter' }
+              maven { url 'https://maven.aliyun.com/repository/google' }
+              maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+              maven { url 'https://maven.aliyun.com/repository/spring' }
+              maven { url 'https://maven.aliyun.com/repository/spring-plugin' }
+              maven { url 'https://maven.aliyun.com/repository/grails-core' }
+              maven { url 'https://maven.aliyun.com/repository/apache-snapshots' }
+              mavenLocal()
+              mavenCentral()
+          }
+        }
+        EOF
+      - gradle build -x test
+
+  - name: rebuild-cache
+    image: meltwater/drone-cache
+    settings:
+      backend: filesystem
+      rebuild: true
+      cache_key: '{{ .Repo.Name }}_{{ arch }}_{{ os }}'
+      mount:
+        - /root/.gradle
+    volumes:
+      - name: cache
+        path: /tmp/cache
+      - name: gradle
+        path: /root/.gradle
+
+  - name: publish-image
+    image: plugins/docker
+    settings:
+      insecure: true
+      repo: 192.168.10.101:5000/cora
+      registry: 192.168.10.101:5000
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA:0:8}
+
+  - name: deploy
+    image: pelotech/drone-helm3:0.14
+    pull: if-not-exists
+    environment:
+      BASE_URL:
+        from_secret: prod_base_url
+    settings:
+      debug: true
+      helm_command: upgrade
+      chart: ./ci/helm/cora
+      release: cora
+      namespace: cora
+      values: "ingress.enabled=true,\
+        ingress.hosts[0].host=jsx.$${BASE_URL},\
+        ingress.hosts[0].paths[0].path=/graphql,\
+        ingress.hosts[0].paths[1].path=/api,\
+        image.tag=${DRONE_COMMIT_SHA:0:8},\
+        image.repository=192.168.10.101:5000/cora,\
+        image.pullPolicy=Always"
+
+      kube_api_server:
+        from_secret: prod_kube_api_server
+      kube_service_account:
+        from_secret: prod_kube_service_account
+      kube_token:
+        from_secret: prod_kube_token
+      kube_certificate:
+        from_secret: prod_kube_certificate
+      atomic_upgrade: true
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/drone-volumes/cache
+  - name: gradle
+    temp: {}
