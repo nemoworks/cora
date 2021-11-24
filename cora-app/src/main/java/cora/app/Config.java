@@ -126,7 +126,7 @@ public class Config {
         ServletHolder servletHolder2 = new ServletHolder();
         servletHolder2.setServlet(k8sServlet());
 
-        servletHandler.addServletWithMapping(servletHolder,"/restapi/*");
+        servletHandler.addServletWithMapping(servletHolder,"/api/v1/*");
         servletHandler.addServletWithMapping(servletHolder1,"/graphql");
         servletHandler.addServletWithMapping(servletHolder2,"/api/healthz");
         server.setHandler(servletHandler);
