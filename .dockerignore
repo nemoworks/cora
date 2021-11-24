@@ -1,0 +1,6 @@
+.git
+.gradle
+ci/helm
+buildSrc
+*/build/
+!cora-app/build/libs/*.jar

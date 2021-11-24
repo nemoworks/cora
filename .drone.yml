@@ -86,6 +86,8 @@ steps:
       insecure: true
       repo: 192.168.10.101:5000/cora
       registry: 192.168.10.101:5000
+      mirror:
+        from_secret: prod_docker_registry_mirror
       tags:
         - latest
         - ${DRONE_COMMIT_SHA:0:8}
