@@ -128,4 +128,9 @@ public class CoraBuilder {
         jsonObject.put("schemaDefinition", schema);
         mongoTemplate.insert(jsonObject, "graphNode");
     }
+
+    public JSONObject getSchemas(){
+        JSONObject graphNode = mongoTemplate.findById("619daa213a54f960ad96a712", JSONObject.class, "graphNode");
+        return graphNode.getJSONObject("data");
+    }
 }
