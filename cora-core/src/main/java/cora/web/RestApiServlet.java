@@ -1,8 +1,8 @@
-package cora.app.web;
+package cora.web;
 
 import com.alibaba.fastjson.JSON;
-import cora.app.CoraBuilder;
-import cora.app.servletutil.ServletUtil;
+import cora.CoraBuilder;
+import cora.util.ServletUtil;
 import cora.graph.CoraGraph;
 import cora.graph.IngressType;
 import cora.util.VelocityTemplate;
@@ -37,7 +37,7 @@ public class RestApiServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
         String coraQL;
         String type = request.getParameter("type");
         String pathInfo = request.getPathInfo();
@@ -72,6 +72,7 @@ public class RestApiServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String type = req.getParameter("type");
         String schema = ServletUtil.getRequestBody(req);
         String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.MUTATION);
