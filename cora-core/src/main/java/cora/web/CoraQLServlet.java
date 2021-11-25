@@ -3,6 +3,8 @@ package cora.web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
+import cora.graph.CustomIngress;
+import cora.parser.SDLParser;
 import cora.util.ServletUtil;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -17,7 +19,7 @@ import java.io.IOException;
 //graphql api impl
 public class CoraQLServlet extends HttpServlet {
 
-    private final GraphQL graphQL;
+    private GraphQL graphQL;
 
     private final CoraBuilder coraBuilder;
 
@@ -33,22 +35,20 @@ public class CoraQLServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin","*");
         String schema = ServletUtil.getRequestBody(req);
         if(schema.contains("query_schemas")){
             JSONObject schemas = coraBuilder.getSchemas();
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setStatus(200);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Access-Control-Allow-Origin","*");
             response.getWriter().write(schemas.toJSONString());
+        }else if(schema.contains("create_api")){
+            this.graphQL = coraBuilder.addCustomIngress(schema);
+            response.getWriter().write("add new ingress.");
         }else{
             ExecutionResult result = graphQL.execute(schema);
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setStatus(200);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Access-Control-Allow-Origin","*");
             if (result.getErrors().isEmpty())
                 response.getWriter().write(JSON.toJSONString(result.getData()));
             else response.getWriter().write(JSON.toJSONString(result.getErrors()));

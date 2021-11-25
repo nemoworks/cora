@@ -47,11 +47,11 @@ public class CoraRuntimeWiring {
         runtimeWiring.getDataFetchers().put(MUTATION_IN_GRAPHQL,new LinkedHashMap<>());
     }
 
-    void addCoraDataFetcherInCoraIngress(String name, DataFetcher dataFetcher){
+    public void addCoraDataFetcherInCoraIngress(String name, DataFetcher dataFetcher){
         runtimeWiring.getDataFetchers().get(QUERY_IN_GRAPHQL).put(name,dataFetcher);
     }
 
-    void addCoraDataFetchersInCoraNode(String name, Map<String, DataFetcher> dataFetcherMap){
+    public void addCoraDataFetchersInCoraNode(String name, Map<String, DataFetcher> dataFetcherMap){
         runtimeWiring.getDataFetchers().put(name,dataFetcherMap);
     }
 

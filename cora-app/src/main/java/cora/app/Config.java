@@ -2,6 +2,9 @@ package cora.app;
 
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
+import cora.groovy.GroovyScriptService;
+import cora.groovy.GroovyScriptTemplate;
+import cora.groovy.impl.CustomCoraRepoFactory;
 import cora.web.CoraQLServlet;
 import cora.web.K8sServlet;
 import cora.web.RestApiServlet;
@@ -14,6 +17,7 @@ import cora.parser.JsonSchemaParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import graphql.schema.DataFetcher;
+import groovy.lang.GroovyClassLoader;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -80,6 +84,12 @@ public class Config {
     }
 
     @Bean
+    public GroovyScriptService groovyScriptService(){
+        GroovyScriptTemplate groovyScriptTemplate = new GroovyScriptTemplate();
+        return new CustomCoraRepoFactory(groovyScriptTemplate,new GroovyClassLoader());
+    }
+
+    @Bean
     public CoraTypeRegistry coraTypeRegistry() {
         return new CoraTypeRegistry();
     }
@@ -91,7 +101,7 @@ public class Config {
 
     @Bean
     public CoraBuilder coraBuilder(){
-        return new CoraBuilder(coraRuntimeWiring(),coraTypeRegistry(),coraParser(),mongoTemplate);
+        return new CoraBuilder(coraRuntimeWiring(),coraTypeRegistry(),coraParser(),mongoTemplate, groovyScriptService());
     }
 
     @Bean

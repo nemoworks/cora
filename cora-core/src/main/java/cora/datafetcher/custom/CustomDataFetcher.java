@@ -14,9 +14,9 @@ public class CustomDataFetcher implements DataFetcher<JSONObject> {
 
     @Override
     public JSONObject get(DataFetchingEnvironment environment) throws Exception {
-        JSONObject content = new JSONObject(environment.getArgument("fields"));
-        String fieldType = ((GraphQLObjectType) environment.getFieldType()).getName();
-        return customCoraRepository.resolve(content, new StorageHelper(),fieldType);
+      //  JSONObject content = new JSONObject(environment.getArgument("fields"));
+      //  String fieldType = ((GraphQLObjectType) environment.getFieldType()).getName();
+        return customCoraRepository.resolve(null, new StorageHelper(),null);
     }
 }
 

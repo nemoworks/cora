@@ -71,5 +71,24 @@
     ​	}
 
     ​	date
+  
 
-    }
+  + custom defined api for example
+
+    definition like:
+    
+        {
+          create_api(
+            nodeType:"Saler",
+            apiName:"getSalerNum",
+            code:"System.out.println(\"nodeType:\" + coreNodeType);JSONObject jsonObject = new JSONObject();jsonObject.put(\"name\",\"tc\");return jsonObject;"
+          )
+        }
+    
+    api use like:
+
+        {
+            getSalerNum{
+                name
+            }
+        }

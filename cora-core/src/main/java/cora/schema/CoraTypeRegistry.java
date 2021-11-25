@@ -58,6 +58,12 @@ public class CoraTypeRegistry {
         }
     }
 
+    public void addCustomAPIInQuery(String nodeType,String apiName){
+        this.addFieldDefinitionsInQueryType(apiName
+                ,new TypeName(nodeType)
+                ,new ArrayList<>());
+    }
+
     //在GraphQL的Schema中的Query类中增加一个访问定义的对象的字段
     private void addDocumentTypeInQuery(String name) {
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
