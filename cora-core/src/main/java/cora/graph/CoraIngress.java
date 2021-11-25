@@ -16,8 +16,8 @@ public class CoraIngress {
         this.ingress = ingress;
     }
 
-    public void addIngress(IngressType IngressType,String ingressName){
-        this.ingress.add(new ImmutablePair<>(IngressType,ingressName));
+    public void addIngress(IngressType IngressType,String ingress){
+        this.ingress.add(new ImmutablePair<>(IngressType,ingress));
     }
 
     public boolean removeIngress(String ingressName){

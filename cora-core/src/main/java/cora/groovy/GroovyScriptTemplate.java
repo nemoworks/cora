@@ -20,6 +20,14 @@ public class GroovyScriptTemplate{
         return template;
     }
 
+    public GroovyScriptTemplate() {
+        try {
+            this.scriptTemplate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void scriptTemplate() throws IOException {
         final String path = "classpath*:groovyTemplate/*.groovyTemplate";
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

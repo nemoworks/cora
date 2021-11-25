@@ -2,9 +2,14 @@ package cora;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import cora.datafetcher.custom.CustomCoraRepository;
+import cora.datafetcher.custom.CustomDataFetcher;
 import cora.graph.CoraGraph;
 import cora.graph.CoraNode;
+import cora.graph.CustomIngress;
+import cora.groovy.GroovyScriptService;
 import cora.parser.CoraParser;
+import cora.parser.SDLParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import cora.util.StringUtil;
@@ -38,6 +43,8 @@ public class CoraBuilder {
 
     final MongoTemplate mongoTemplate;
 
+    final GroovyScriptService groovyScriptService;
+
     @Value("${cora.node.typeCollection}")
     String collectionName;
 
@@ -45,11 +52,12 @@ public class CoraBuilder {
 
     private final SchemaGenerator schemaGenerator = new SchemaGenerator();
 
-    public CoraBuilder(CoraRuntimeWiring coraRuntimeWiring, CoraTypeRegistry coraTypeRegistry, CoraParser coraParser, MongoTemplate mongoTemplate) {
+    public CoraBuilder(CoraRuntimeWiring coraRuntimeWiring, CoraTypeRegistry coraTypeRegistry, CoraParser coraParser, MongoTemplate mongoTemplate, GroovyScriptService groovyScriptService) {
         this.coraRuntimeWiring = coraRuntimeWiring;
         this.coraTypeRegistry = coraTypeRegistry;
         this.coraParser = coraParser;
         this.mongoTemplate = mongoTemplate;
+        this.groovyScriptService = groovyScriptService;
     }
 
     // load json objects in /resources/demo/jieshixing.json to initial cora
@@ -132,5 +140,21 @@ public class CoraBuilder {
     public JSONObject getSchemas(){
         JSONObject graphNode = mongoTemplate.findById("619daa213a54f960ad96a712", JSONObject.class, "graphNode");
         return graphNode.getJSONObject("data");
+    }
+
+    public GraphQL addCustomIngress(String schema){
+        SDLParser sdlParser = new SDLParser();
+        CustomIngress customIngress = sdlParser.parseCustomIngressSchema(schema);
+        groovyScriptService.parseAndCache(customIngress.getNodeType(),customIngress.getApiName()
+                ,customIngress.getCodeImpl());
+        CustomCoraRepository instance = groovyScriptService.getInstance(customIngress.getNodeType(), customIngress.getApiName());
+        CustomDataFetcher customDataFetcher = new CustomDataFetcher(instance);
+
+        coraRuntimeWiring.addCoraDataFetcherInCoraIngress(customIngress.getApiName(),customDataFetcher);
+        coraTypeRegistry.addCustomAPIInQuery(customIngress.getNodeType(),customIngress.getApiName());
+        coraTypeRegistry.buildTypeRegistry();
+        this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
+                , coraRuntimeWiring.getRuntimeWiring());
+        return newGraphQL(graphQLSchema).build();
     }
 }
