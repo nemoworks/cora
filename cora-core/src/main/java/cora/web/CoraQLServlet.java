@@ -37,6 +37,7 @@ public class CoraQLServlet extends HttpServlet {
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Methods","POST");
         String schema = ServletUtil.getRequestBody(req);
         if(schema.contains("query_schemas")){
             JSONObject schemas = coraBuilder.getSchemas();
@@ -44,6 +45,9 @@ public class CoraQLServlet extends HttpServlet {
         }else if(schema.contains("create_api")){
             this.graphQL = coraBuilder.addCustomIngress(schema);
             response.getWriter().write("add new ingress.");
+        }else if(schema.contains("query_flowDefinitions")){
+            JSONObject flows = coraBuilder.getFlows();
+            response.getWriter().write(flows.toJSONString());
         }else{
             ExecutionResult result = graphQL.execute(schema);
             if (result.getErrors().isEmpty())

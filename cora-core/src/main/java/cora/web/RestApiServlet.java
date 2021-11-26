@@ -65,17 +65,21 @@ public class RestApiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(200);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin","*");
         if(req.getPathInfo().equals("/schemas")){
             String schema = ServletUtil.getRequestBody(req);
-            JSONObject coraNode = coraBuilder.addTypeInDB(schema);
             JSONObject jsonObject = JSON.parseObject(schema).getJSONObject("fieldschema");
             this.graphQL = coraBuilder.addTypeInGraphQL(jsonObject.toJSONString());
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setStatus(200);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Access-Control-Allow-Origin","*");
+            JSONObject coraNode = coraBuilder.addTypeInDB(schema);
             response.getWriter().write(JSON.toJSONString(coraNode));
+        }else if(req.getPathInfo().equals("/flowDefinitions")){
+            String schema = ServletUtil.getRequestBody(req);
+            JSONObject jsonObject = coraBuilder.addFlowDefinitionInDB(schema);
+            response.getWriter().write(JSON.toJSONString(jsonObject));
         }else{
             String type = req.getParameter("type");
             String schema = ServletUtil.getRequestBody(req);
@@ -84,11 +88,6 @@ public class RestApiServlet extends HttpServlet {
             map.put("data",schema);
             String coraQL = VelocityTemplate.build(a, map);
             ExecutionResult result = graphQL.execute(coraQL);
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setStatus(200);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Access-Control-Allow-Origin","*");
             response.getWriter().write(JSON.toJSONString(result.getData()));
         }
     }

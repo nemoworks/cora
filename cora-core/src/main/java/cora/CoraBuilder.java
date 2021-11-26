@@ -137,6 +137,24 @@ public class CoraBuilder {
         return coraNode;
     }
 
+    public JSONObject addFlowDefinitionInDB(String schema){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flowDefinition", schema);
+        JSONObject flowDefinition = mongoTemplate.insert(jsonObject, "flowDefinition");
+        return flowDefinition;
+    }
+
+    public JSONObject getFlows(){
+        List<JSONObject> graphNodeList = mongoTemplate.findAll(JSONObject.class, "flowDefinition");
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        graphNodeList.forEach(graphNode->{
+            jsonArray.add(graphNode.getJSONObject("flowDefinition"));
+        });
+        jsonObject.put("flowDefinitions",jsonArray);
+        return jsonObject;
+    }
+
     public JSONObject getSchemas(){
         List<JSONObject> graphNodeList = mongoTemplate.findAll(JSONObject.class, "graphNode");
         JSONObject jsonObject = new JSONObject();
