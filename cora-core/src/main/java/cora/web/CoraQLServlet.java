@@ -37,6 +37,7 @@ public class CoraQLServlet extends HttpServlet {
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
+
         response.setHeader("Access-Control-Allow-Methods","POST");
         String schema = ServletUtil.getRequestBody(req);
         if(schema.contains("query_schemas")){
