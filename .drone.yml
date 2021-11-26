@@ -32,22 +32,19 @@ steps:
       restore: true
       cache_key: '{{ .Repo.Name }}_{{ arch }}_{{ os }}'
       mount:
-        - /root/.gradle
+        - .tmp/.gradle/caches
     volumes:
       - name: cache
         path: /tmp/cache
-      - name: gradle
-        path: /root/.gradle
 
   - name: build
     image: gradle:7.2-jdk11
-    volumes:
-      - name: gradle
-        path: /root/.gradle
+    environment:
+      GRADLE_USER_HOME: .tmp/.gradle
     commands:
-      - mkdir -p ~/.gradle
+      - mkdir -p $${GRADLE_USER_HOME}
       - |
-        cat > ~/.gradle/init.gradle <<EOF
+        cat > $${GRADLE_USER_HOME}/init.gradle <<EOF
         allprojects {
           repositories {
               maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
@@ -73,12 +70,10 @@ steps:
       rebuild: true
       cache_key: '{{ .Repo.Name }}_{{ arch }}_{{ os }}'
       mount:
-        - /root/.gradle
+        - .tmp/.gradle/caches
     volumes:
       - name: cache
         path: /tmp/cache
-      - name: gradle
-        path: /root/.gradle
 
   - name: publish-image
     image: plugins/docker
@@ -86,6 +81,8 @@ steps:
       insecure: true
       repo: 192.168.10.101:5000/cora
       registry: 192.168.10.101:5000
+      mirror:
+        from_secret: prod_docker_registry_mirror
       tags:
         - latest
         - ${DRONE_COMMIT_SHA:0:8}
@@ -124,5 +121,3 @@ volumes:
   - name: cache
     host:
       path: /tmp/drone-volumes/cache
-  - name: gradle
-    temp: {}
