@@ -3,8 +3,6 @@ package cora.web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
-import cora.graph.CustomIngress;
-import cora.parser.SDLParser;
 import cora.util.ServletUtil;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -13,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.validation.Schema;
 import java.io.IOException;
 
 //graphql api impl
