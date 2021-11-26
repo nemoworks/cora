@@ -1,6 +1,7 @@
 package cora;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.custom.CustomCoraRepository;
 import cora.datafetcher.custom.CustomDataFetcher;
@@ -98,14 +99,14 @@ public class CoraBuilder {
         coraTypeRegistry.initSchemaDefinition();
         coraRuntimeWiring.initCoraRuntimeWiring();
 
-//        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
-//        coraNodes.forEach(coraNode -> {
-//            String schema = coraNode.getString("schemaDefinition");
-//            List<Definition> parse = coraParser.parseSchema(schema);
-//            String nodeName = CoraGraph.merge(parse);
-//            this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
-//        });
-        this.graphNodeInitialization();
+        List<JSONObject> coraNodes = mongoTemplate.findAll(JSONObject.class, collectionName);
+        coraNodes.forEach(coraNode -> {
+            String schema = coraNode.getJSONObject("schemaDefinition").getString("fieldschema");
+            List<Definition> parse = coraParser.parseSchema(schema);
+            String nodeName = CoraGraph.merge(parse);
+            this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
+        });
+        //this.graphNodeInitialization();
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
@@ -121,25 +122,48 @@ public class CoraBuilder {
 
     public GraphQL addTypeInGraphQL(String schema) {
         List<Definition> parse = coraParser.parseSchema(schema);
-        //GraphInstance.merge(parse);
-        this.addTypeInDB(schema);
-        CoraNode node = new CoraNode.Builder((ObjectTypeDefinition) parse.get(0)).build();
-        this.addNewTypeAndDataFetcherInGraphQL(node);
+        String nodeName = CoraGraph.merge(parse);
+        this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
         return newGraphQL(graphQLSchema).build();
     }
 
-    private void addTypeInDB(String schema) {
+    public JSONObject addTypeInDB(String schema) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("schemaDefinition", schema);
-        mongoTemplate.insert(jsonObject, "graphNode");
+        JSONObject coraNode = mongoTemplate.insert(jsonObject, "graphNode");
+        return coraNode;
+    }
+
+    public JSONObject addFlowDefinitionInDB(String schema){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flowDefinition", schema);
+        JSONObject flowDefinition = mongoTemplate.insert(jsonObject, "flowDefinition");
+        return flowDefinition;
+    }
+
+    public JSONObject getFlows(){
+        List<JSONObject> graphNodeList = mongoTemplate.findAll(JSONObject.class, "flowDefinition");
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        graphNodeList.forEach(graphNode->{
+            jsonArray.add(graphNode.getJSONObject("flowDefinition"));
+        });
+        jsonObject.put("flowDefinitions",jsonArray);
+        return jsonObject;
     }
 
     public JSONObject getSchemas(){
-        JSONObject graphNode = mongoTemplate.findById("619daa213a54f960ad96a712", JSONObject.class, "graphNode");
-        return graphNode.getJSONObject("data");
+        List<JSONObject> graphNodeList = mongoTemplate.findAll(JSONObject.class, "graphNode");
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        graphNodeList.forEach(graphNode->{
+            jsonArray.add(graphNode.getJSONObject("schemaDefinition"));
+        });
+        jsonObject.put("schemaDefinitions",jsonArray);
+        return jsonObject;
     }
 
     public GraphQL addCustomIngress(String schema){

@@ -3,8 +3,6 @@ package cora.web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
-import cora.graph.CustomIngress;
-import cora.parser.SDLParser;
 import cora.util.ServletUtil;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -13,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.validation.Schema;
 import java.io.IOException;
 
 //graphql api impl
@@ -40,6 +37,7 @@ public class CoraQLServlet extends HttpServlet {
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Methods","POST");
         String schema = ServletUtil.getRequestBody(req);
         if(schema.contains("query_schemas")){
             JSONObject schemas = coraBuilder.getSchemas();
@@ -47,6 +45,9 @@ public class CoraQLServlet extends HttpServlet {
         }else if(schema.contains("create_api")){
             this.graphQL = coraBuilder.addCustomIngress(schema);
             response.getWriter().write("add new ingress.");
+        }else if(schema.contains("query_flowDefinitions")){
+            JSONObject flows = coraBuilder.getFlows();
+            response.getWriter().write(flows.toJSONString());
         }else{
             ExecutionResult result = graphQL.execute(schema);
             if (result.getErrors().isEmpty())

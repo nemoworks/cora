@@ -1,6 +1,7 @@
 package cora.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
 import cora.util.ServletUtil;
 import cora.graph.CoraGraph;
@@ -21,9 +22,12 @@ import java.util.Map;
 // restful api impl
 public class RestApiServlet extends HttpServlet {
 
-    private final GraphQL graphQL;
+    private GraphQL graphQL;
+
+    private final CoraBuilder coraBuilder;
 
     public RestApiServlet(CoraBuilder coraBuilder) {
+        this.coraBuilder = coraBuilder;
         this.graphQL = coraBuilder.createGraphQL();
     }
 
@@ -33,23 +37,11 @@ public class RestApiServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String coraQL;
         String type = request.getParameter("type");
         String pathInfo = request.getPathInfo();
-        if(request.getPathInfo().equals("/schemas")){
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setStatus(200);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader("Access-Control-Allow-Origin","*");
-            response.getWriter().write(JSON.toJSONString(CoraGraph.CoraNodeMap));
-        }
-
         if(!request.getParameterMap().keySet().contains("id")){
             coraQL = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.QUERY_LIST);
         }else{
@@ -73,19 +65,31 @@ public class RestApiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        String type = req.getParameter("type");
-        String schema = ServletUtil.getRequestBody(req);
-        String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.MUTATION);
-        Map<String,String> map = new HashMap<>();
-        map.put("data",schema);
-        String coraQL = VelocityTemplate.build(a, map);
-        ExecutionResult result = graphQL.execute(coraQL);
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setStatus(200);
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
-        response.getWriter().write(JSON.toJSONString(result.getData()));
+        if(req.getPathInfo().equals("/schemas")){
+            String schema = ServletUtil.getRequestBody(req);
+            JSONObject jsonObject = JSON.parseObject(schema).getJSONObject("fieldschema");
+            this.graphQL = coraBuilder.addTypeInGraphQL(jsonObject.toJSONString());
+            JSONObject coraNode = coraBuilder.addTypeInDB(schema);
+            response.getWriter().write(JSON.toJSONString(coraNode));
+        }else if(req.getPathInfo().equals("/flowDefinitions")){
+            String schema = ServletUtil.getRequestBody(req);
+            JSONObject jsonObject = coraBuilder.addFlowDefinitionInDB(schema);
+            response.getWriter().write(JSON.toJSONString(jsonObject));
+        }else{
+            String type = req.getParameter("type");
+            String schema = ServletUtil.getRequestBody(req);
+            String a = CoraGraph.CoraIngressMap.get(type).getIngressData(IngressType.MUTATION);
+            Map<String,String> map = new HashMap<>();
+            map.put("data",schema);
+            String coraQL = VelocityTemplate.build(a, map);
+            ExecutionResult result = graphQL.execute(coraQL);
+            response.getWriter().write(JSON.toJSONString(result.getData()));
+        }
     }
 
     @Override
