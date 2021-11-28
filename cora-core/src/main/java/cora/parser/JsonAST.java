@@ -67,6 +67,14 @@ public class JsonAST {
         return Double.parseDouble(value);
     }
 
+    public JsonArray getJsonArray(String key) {
+        JSONParser.ValueContext value = (JSONParser.ValueContext)map.get(key);
+        if (value == null) {
+            return null;
+        }
+        return new JsonArray(value.arr());
+    }
+
     public void put(String key, Object object) {
         map.put(key, object);
     }
@@ -79,6 +87,13 @@ public class JsonAST {
         return new JsonAST(objCtx);
     }
 
+    public static JsonArray parseArray(String text) {
+        if (text == null) {
+            return null;
+        }
+        JsonArray array = JsonArray.parseArray(text);
+        return array;
+    }
 
     public Map<String, Object> getMap() {
         return map;

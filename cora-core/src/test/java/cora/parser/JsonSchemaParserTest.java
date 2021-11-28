@@ -2,6 +2,7 @@ package cora.parser;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import cora.parser.dsl.JsonSchemaParser;
 import graphql.language.Definition;
 import graphql.language.ObjectTypeDefinition;
 import org.junit.jupiter.api.AfterEach;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 
-import javax.json.JsonObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

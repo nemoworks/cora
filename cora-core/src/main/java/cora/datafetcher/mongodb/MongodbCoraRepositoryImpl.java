@@ -2,6 +2,8 @@ package cora.datafetcher.mongodb;
 
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.CoraRepository;
+import cora.parser.JsonAST;
+import cora.parser.sql.MongodbQueryFilterParser;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,6 +54,17 @@ public class MongodbCoraRepositoryImpl implements CoraRepository<JSONObject> {
             results.add(temp);
         });
         return results;
+    }
+
+    @Override
+    public List<JSONObject> queryNodeInstanceList(String nodeType, JSONObject filters) {
+        JsonAST jsonAST = JsonAST.parseJSON(filters.toJSONString());
+        MongodbQueryFilterParser mongodbQueryFilterParser =
+                new MongodbQueryFilterParser(new MongodbQueryFilterMapper());
+        Query query = mongodbQueryFilterParser.parse(jsonAST);
+        query.addCriteria(Criteria.where("nodeType").is(nodeType));
+        List<JSONObject> jsonObjects = mongoTemplate.find(query, JSONObject.class, collectionName);
+        return jsonObjects;
     }
 
     @Override

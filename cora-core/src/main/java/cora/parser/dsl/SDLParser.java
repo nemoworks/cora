@@ -1,8 +1,8 @@
-package cora.parser;
+package cora.parser.dsl;
 
 
 import cora.graph.CustomIngress;
-import cora.util.StringUtil;
+import cora.parser.dsl.CoraParser;
 import graphql.language.*;
 import graphql.parser.Parser;
 import org.apache.commons.lang.StringUtils;

@@ -146,6 +146,11 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
     }
 
     @Override
+    public List<JSONObject> queryNodeInstanceList(String nodeType, JSONObject filters) {
+        return null;
+    }
+
+    @Override
     public JSONObject updateNodeInstance(String nodeType, String id, JSONObject data) {
         return null;
     }

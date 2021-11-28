@@ -1,4 +1,4 @@
-package cora.parser;
+package cora.parser.dsl;
 
 import graphql.language.Definition;
 

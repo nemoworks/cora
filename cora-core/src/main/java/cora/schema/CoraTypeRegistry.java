@@ -31,6 +31,15 @@ public class CoraTypeRegistry {
         OperationTypeDefinition operationTypeDefinition = new OperationTypeDefinition("query", new TypeName("Query"));
         SchemaDefinition schemaDefinition = builder.operationTypeDefinition(operationTypeDefinition).build();
         typeDefinitionRegistry.add(schemaDefinition);
+
+        //filter input init
+        List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
+        GQLTemplate.getFilter_items_in_query_list().forEach(item-> inputValueDefinitions.add(new InputValueDefinition(item,new TypeName("String"))));
+        InputObjectTypeDefinition inputObjectTypeDefinition = InputObjectTypeDefinition.newInputObjectDefinition()
+                .name(GQLTemplate.getFilterItemForNodeInstance())
+                .inputValueDefinitions(inputValueDefinitions).build();
+        typeDefinitionRegistry.add(inputObjectTypeDefinition);
+
     }
 
     public void buildTypeRegistry() {
@@ -51,7 +60,7 @@ public class CoraTypeRegistry {
 
             this.addDocumentTypeInQuery(coraNode.getName());
 
-            this.addDocumentListTypeInQuery(coraNode.getName());
+            this.addDocumentListTypeInQuery(coraNode.getName(),coraNode.getInputTypeMap());
 
             this.addCreateNodeInstanceInQuery(coraNode.getName(), coraNode.getInputTypeMap());
 
@@ -74,9 +83,14 @@ public class CoraTypeRegistry {
                 , inputValueDefinitions);
     }
 
-    private void addDocumentListTypeInQuery(String name) {
+    private void addDocumentListTypeInQuery(String name, Map<String, Type> typeMap) {
+
+        InputObjectTypeDefinition filterDefinition = FilterDefinitionBuilder.build(name, typeMap);
+        typeDefinitionRegistry.add(filterDefinition);
+        List<InputValueDefinition> filterValueDefinition = new ArrayList<>();
+        filterValueDefinition.add(new InputValueDefinition("where", new TypeName(GQLTemplate.filtersOfNodeInstance(name))));
         this.addFieldDefinitionsInQueryType(GQLTemplate.queryInstanceList(name), new ListType(new TypeName(name)),
-                new ArrayList<>());
+                filterValueDefinition);
     }
 
     private void addCreateNodeInstanceInQuery(String name, Map<String, Type> typeMap) {
