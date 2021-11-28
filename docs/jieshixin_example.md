@@ -92,3 +92,22 @@
                 name
             }
         }
+
+  + support _and & _eq in query_xx_list
+    
+    for example:
+
+        {
+            query_invoice_list(where:{
+                isPaybackEnd:{
+                    _eq:"是"
+                },
+                _and:[
+                    {invoiceDate:{_eq:"2020-01-01"}},
+                    {invoiceCompany:{_eq:"公司2"}}
+                ]
+            }){
+                _id
+                isPaybackEnd
+            }
+        }

@@ -15,5 +15,7 @@ public interface CoraRepository<T> {
 
     List<T> queryNodeInstanceList(List<String> instanceIds);
 
+    List<T> queryNodeInstanceList(String nodeType, JSONObject filters);
+
     T updateNodeInstance(String nodeType, String id, JSONObject data);
 }

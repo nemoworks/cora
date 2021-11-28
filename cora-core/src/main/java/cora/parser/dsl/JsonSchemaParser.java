@@ -1,8 +1,9 @@
-package cora.parser;
+package cora.parser.dsl;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
+import cora.parser.JsonAST;
 import cora.util.StringUtil;
 import graphql.language.*;
 
