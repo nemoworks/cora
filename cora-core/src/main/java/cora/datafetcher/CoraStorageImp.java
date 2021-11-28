@@ -35,6 +35,7 @@ public class CoraStorageImp implements CoraStorage<JSONObject> {
     public DataFetcher<List<JSONObject>> getListFetcher() {
         return dataFetcherEnvironment -> {
             String fieldType = ((GraphQLObjectType) ((GraphQLList) dataFetcherEnvironment.getFieldType()).getWrappedType()).getName();
+            JSONObject content = new JSONObject(dataFetcherEnvironment.getArgument("where"));
             if (dataFetcherEnvironment.getSource() != null) {
                 String name = dataFetcherEnvironment.getFieldDefinition().getName();
                 JSONObject source = dataFetcherEnvironment.getSource();
