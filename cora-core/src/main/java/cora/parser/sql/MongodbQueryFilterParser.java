@@ -37,8 +37,23 @@ public class MongodbQueryFilterParser {
                     query.addCriteria(criteria);
                     break;
                 }
-                case "_or":
+                case "_or":{
+                    JsonArray jsonArray = filterContents.getJsonArray(key);
+                    List<Criteria> criteriaList = new ArrayList<>();
+                    for(int i = 0;i< jsonArray.getSize();i++){
+                        JsonAST jsonAST = jsonArray.getJsonAST(i);
+                        jsonAST.getMap().keySet().forEach(key1->{
+                            JsonAST jsonast = jsonAST.getJSONAST(key1);
+                            String eq = jsonast.getString("_eq");
+                            Criteria criteria = queryFilterMapper.equalOperation(key1, eq);
+                            criteriaList.add(criteria);
+                        });
+                    }
+                    Criteria[] criterias = new Criteria[criteriaList.size()];
+                    Criteria criteria = queryFilterMapper.orOperation(criteriaList.toArray(criterias));
+                    query.addCriteria(criteria);
                     break;
+                }
                 default:{
                     JsonAST jsonast = filterContents.getJSONAST(key);
                     String eq = jsonast.getString("_eq");

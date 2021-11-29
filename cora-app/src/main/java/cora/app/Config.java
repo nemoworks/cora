@@ -21,6 +21,8 @@ import groovy.lang.GroovyClassLoader;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +141,19 @@ public class Config {
         servletHandler.addServletWithMapping(servletHolder,"/api/v1/*");
         servletHandler.addServletWithMapping(servletHolder1,"/graphql");
         servletHandler.addServletWithMapping(servletHolder2,"/api/healthz");
-        server.setHandler(servletHandler);
+
+        ResourceHandler resource_handler = new ResourceHandler();
+// Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
+// In this example it is the current directory but it can be configured to anything that the jvm has access to.
+        resource_handler.setDirectoriesListed(true);
+        resource_handler.setWelcomeFiles(new String[]{"index.html" });
+        resource_handler.setResourceBase("./target/classes/webapp");
+
+        HandlerList handlers = new HandlerList();
+        handlers.addHandler(resource_handler);
+        handlers.addHandler(servletHandler);
+
+        server.setHandler(handlers);
         server.start();
         return server;
     }
