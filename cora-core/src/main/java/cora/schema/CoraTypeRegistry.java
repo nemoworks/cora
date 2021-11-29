@@ -32,7 +32,15 @@ public class CoraTypeRegistry {
         SchemaDefinition schemaDefinition = builder.operationTypeDefinition(operationTypeDefinition).build();
         typeDefinitionRegistry.add(schemaDefinition);
 
-        //filter input init
+        /**
+         * filter field input init
+         * for example
+         * isPaybackEnd:{
+         *             _eq:"是"
+         *             _lt:"asd"
+         *             ...
+         *          }
+         */
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
         GQLTemplate.getFilter_items_in_query_list().forEach(item-> inputValueDefinitions.add(new InputValueDefinition(item,new TypeName("String"))));
         InputObjectTypeDefinition inputObjectTypeDefinition = InputObjectTypeDefinition.newInputObjectDefinition()

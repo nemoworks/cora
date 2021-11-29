@@ -14,4 +14,9 @@ public class MongodbQueryFilterMapper implements QueryFilterMapper<Criteria> {
     public Criteria andOperation(Criteria[] fields) {
         return new Criteria().andOperator(fields);
     }
+
+    @Override
+    public Criteria orOperation(Criteria[] fields) {
+        return new Criteria().orOperator(fields);
+    }
 }

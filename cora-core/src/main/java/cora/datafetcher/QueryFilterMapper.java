@@ -5,4 +5,6 @@ public interface QueryFilterMapper<T> {
     T equalOperation(String key,Object value);
 
     T andOperation(T[] fields);
+
+    T orOperation(T[] fields);
 }

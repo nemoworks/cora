@@ -6,11 +6,14 @@ import java.util.List;
 
 public class GQLTemplate {
 
+    //input filter
     private static final List<String> filter_Definition_in_query_list = Arrays.asList("_and","_or");
 
+    //input filter of field
     private static final List<String> filter_items_in_query_list = Arrays.asList("_eq","_neq","_gt","_lt");
 
-    //meta filter definition for each field("_eq","_neq","_gt","_lt"...)
+    //filter definition for each field("_eq","_neq","_gt","_lt"...)
+    //input type filters for every field in type
     private static final String FILTER_ITEM_FOR_NODE_INSTANCE = "filters";
 
     //input type for node instance
