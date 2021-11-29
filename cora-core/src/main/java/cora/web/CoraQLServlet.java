@@ -24,6 +24,7 @@ public class CoraQLServlet extends HttpServlet {
         this.coraBuilder = coraBuilder;
         this.graphQL = coraBuilder.createGraphQL();
     }
+    
     @Override
     public void init() throws ServletException {
         super.init();
@@ -38,6 +39,7 @@ public class CoraQLServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin","*");
         response.setHeader("Access-Control-Allow-Methods","POST");
+
         String schema = ServletUtil.getRequestBody(req);
         if(schema.contains("query_schemas")){
             JSONObject schemas = coraBuilder.getSchemas();
