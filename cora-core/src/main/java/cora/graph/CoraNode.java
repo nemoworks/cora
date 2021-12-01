@@ -1,11 +1,18 @@
 package cora.graph;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import cora.graph.coraCache.CacheElement;
+import cora.graph.coraCache.CacheKey;
+import graphql.execution.ResultPath;
 import graphql.language.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CoraNode {
     private String id;
@@ -14,15 +21,17 @@ public class CoraNode {
     private Map<String, Type> typeMap;
     private Map<String, Type> inputTypeMap;
     private Map<String, Type> linkedTypeMap;
+    private Cache<CacheKey, CacheElement> cache;
 
     private List<String> children;
 
-    public CoraNode(String name, Definition definition, Map<String, Type> typeMap, Map<String, Type> inputTypeMap, Map<String, Type> linkedTypeMap, List<String> children) {
+    public CoraNode(String name, Definition definition, Map<String, Type> typeMap, Map<String, Type> inputTypeMap, Map<String, Type> linkedTypeMap, Cache<CacheKey, CacheElement> cache, List<String> children) {
         this.name = name;
         this.definition = definition;
         this.typeMap = typeMap;
         this.inputTypeMap = inputTypeMap;
         this.linkedTypeMap = linkedTypeMap;
+        this.cache = cache;
         this.children = children;
     }
 
@@ -85,6 +94,15 @@ public class CoraNode {
         this.children = children;
     }
 
+    public Cache<CacheKey, CacheElement> getCache() {
+        return cache;
+    }
+
+    public void setCache(Cache<CacheKey, CacheElement> cache) {
+        this.cache = cache;
+    }
+
+
     public static final class Builder {
         private String name;
         private Definition definition;
@@ -95,6 +113,9 @@ public class CoraNode {
         private Map<String, Type> linkedTypeMap = new HashMap<>();
 
         private List<String> children = new ArrayList<>();
+
+        private Cache<CacheKey, CacheElement> cache = Caffeine.newBuilder()
+                .maximumSize(10).expireAfterWrite(10, TimeUnit.MINUTES).build();
 
         public Builder(ObjectTypeDefinition definition) {
             this.name = definition.getName();
@@ -129,7 +150,7 @@ public class CoraNode {
         }
 
         public CoraNode build() {
-            return new CoraNode(name, definition, typeMap, inputTypeMap, linkedTypeMap, children);
+            return new CoraNode(name, definition, typeMap, inputTypeMap, linkedTypeMap,cache, children);
         }
 
         public String getName() {

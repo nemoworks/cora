@@ -3,6 +3,8 @@ package cora;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import cora.datafetcher.custom.CustomCoraRepository;
 import cora.datafetcher.custom.CustomDataFetcher;
 import cora.graph.CoraGraph;
@@ -14,7 +16,11 @@ import cora.parser.dsl.SDLParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import cora.util.StringUtil;
+import graphql.ExecutionInput;
 import graphql.GraphQL;
+import graphql.com.google.common.base.Function;
+import graphql.execution.preparsed.PreparsedDocumentEntry;
+import graphql.execution.preparsed.PreparsedDocumentProvider;
 import graphql.language.Definition;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
@@ -59,6 +65,17 @@ public class CoraBuilder {
         this.mongoTemplate = mongoTemplate;
         this.groovyScriptService = groovyScriptService;
     }
+
+    public Cache<String, PreparsedDocumentEntry> cache = Caffeine.newBuilder().maximumSize(10_000).build();
+
+
+    PreparsedDocumentProvider preparsedCache = new PreparsedDocumentProvider(){
+        @Override
+        public PreparsedDocumentEntry getDocument(ExecutionInput executionInput, java.util.function.Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
+            Function<String, PreparsedDocumentEntry> mapCompute = key -> parseAndValidateFunction.apply(executionInput);
+            return cache.get(executionInput.getQuery(), mapCompute);
+        }
+    };
 
     // load json objects in /resources/demo/jieshixing.json to initial cora
     public void graphNodeInitialization() {
@@ -109,7 +126,7 @@ public class CoraBuilder {
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
-        return newGraphQL(graphQLSchema).build();
+        return newGraphQL(graphQLSchema).preparsedDocumentProvider(preparsedCache).build();
     }
 
     //add new coraNode in runtime context
@@ -180,4 +197,5 @@ public class CoraBuilder {
                 , coraRuntimeWiring.getRuntimeWiring());
         return newGraphQL(graphQLSchema).build();
     }
+
 }
