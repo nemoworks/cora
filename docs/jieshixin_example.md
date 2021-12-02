@@ -71,7 +71,7 @@
             }
         }
     
-  + support _and & _eq in query_xx_list
+  + support [ _and , _or , _eq , _neq , _gt , _lt ] for field with `String`,`Int`  type in query_xx_list
     
     for example:
     
@@ -117,6 +117,19 @@
                 isPaybackEnd
                 invoiceDate
                 invoiceCompany
+            }
+        }
+
+        {
+            query_customerExpense_list(where:{
+                amount:{_neq:1214},
+                _and:[
+                    {customerExpenseId:{_eq:"1"}},
+                    {date:{_eq:"2020-01-01"}}
+                ]
+            }){
+                _id
+                amount
             }
         }
         

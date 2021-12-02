@@ -12,9 +12,18 @@ public class FilterDefinitionBuilder {
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
         //input type map
         typeMap.keySet().forEach(key->{
-            InputValueDefinition inputValueDefinition =
-                    new InputValueDefinition(key, new TypeName(GQLTemplate.getFilterItemForNodeInstance()));
-            inputValueDefinitions.add(inputValueDefinition);
+            if(!(typeMap.get(key) instanceof ListType)){
+                if(((TypeName)typeMap.get(key)).getName().equals("String")){
+                    InputValueDefinition inputValueDefinition =
+                            new InputValueDefinition(key, new TypeName(GQLTemplate.getFilterItemForNodeInstanceForString()));
+                    inputValueDefinitions.add(inputValueDefinition);
+                }
+                else if(((TypeName)typeMap.get(key)).getName().equals("Int")){
+                    InputValueDefinition inputValueDefinition =
+                            new InputValueDefinition(key, new TypeName(GQLTemplate.getFilterItemForNodeInstanceForInt()));
+                    inputValueDefinitions.add(inputValueDefinition);
+                }
+            }
         });
         //_and,_or ...
         GQLTemplate.getFilter_Definition_in_query_list().forEach(definition->{
