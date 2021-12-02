@@ -16,7 +16,6 @@ import cora.parser.dsl.SDLParser;
 import cora.schema.CoraRuntimeWiring;
 import cora.schema.CoraTypeRegistry;
 import cora.util.StringUtil;
-import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.com.google.common.base.Function;
 import graphql.execution.preparsed.PreparsedDocumentEntry;
@@ -66,15 +65,12 @@ public class CoraBuilder {
         this.groovyScriptService = groovyScriptService;
     }
 
-    public Cache<String, PreparsedDocumentEntry> cache = Caffeine.newBuilder().maximumSize(10_000).build();
+    //query string cache
+    public Cache<String, PreparsedDocumentEntry> cache = Caffeine.newBuilder().maximumSize(100).build();
 
-
-    PreparsedDocumentProvider preparsedCache = new PreparsedDocumentProvider(){
-        @Override
-        public PreparsedDocumentEntry getDocument(ExecutionInput executionInput, java.util.function.Function<ExecutionInput, PreparsedDocumentEntry> parseAndValidateFunction) {
-            Function<String, PreparsedDocumentEntry> mapCompute = key -> parseAndValidateFunction.apply(executionInput);
-            return cache.get(executionInput.getQuery(), mapCompute);
-        }
+    PreparsedDocumentProvider preparsedCache = (executionInput, parseAndValidateFunction) -> {
+        Function<String, PreparsedDocumentEntry> mapCompute = key -> parseAndValidateFunction.apply(executionInput);
+        return cache.get(executionInput.getQuery(), mapCompute);
     };
 
     // load json objects in /resources/demo/jieshixing.json to initial cora
@@ -143,7 +139,7 @@ public class CoraBuilder {
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
-        return newGraphQL(graphQLSchema).build();
+        return newGraphQL(graphQLSchema).preparsedDocumentProvider(preparsedCache).build();
     }
 
     public JSONObject addTypeInDB(String schema) {
@@ -195,7 +191,7 @@ public class CoraBuilder {
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
-        return newGraphQL(graphQLSchema).build();
+        return newGraphQL(graphQLSchema).preparsedDocumentProvider(preparsedCache).build();
     }
 
 }

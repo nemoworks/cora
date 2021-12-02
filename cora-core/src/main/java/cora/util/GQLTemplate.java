@@ -8,12 +8,18 @@ public class GQLTemplate {
     //input filter
     private static final List<String> filter_Definition_in_query_list = Arrays.asList("_and","_or");
 
-    //input filter of field
-    private static final List<String> filter_items_in_query_list = Arrays.asList("_eq","_neq","_gt","_lt");
+    //input filter of string field
+    private static final List<String> filter_items_in_query_list_for_string = Arrays.asList("_eq","_neq");
+
+    private static final List<String> filter_items_in_query_list_for_int = Arrays.asList("_eq","_neq","_gt","_lt");
+
 
     //filter definition for each field("_eq","_neq","_gt","_lt"...)
-    //input type filters for every field in type
-    private static final String FILTER_ITEM_FOR_NODE_INSTANCE = "filters";
+    //input type filters for every string field in type
+    private static final String FILTER_ITEM_FOR_NODE_INSTANCE_FOR_STRING = "string_filters";
+
+    private static final String FILTER_ITEM_FOR_NODE_INSTANCE_FOR_INT= "int_filters";
+
 
     //input type for node instance
     private static final String INPUT_TYPE_FOR_NODE_INSTANCE_PRE = "";
@@ -58,11 +64,19 @@ public class GQLTemplate {
         return filter_Definition_in_query_list;
     }
 
-    public static List<String> getFilter_items_in_query_list() {
-        return filter_items_in_query_list;
+    public static List<String> getFilter_items_in_query_list_for_string() {
+        return filter_items_in_query_list_for_string;
     }
 
-    public static String getFilterItemForNodeInstance() {
-        return FILTER_ITEM_FOR_NODE_INSTANCE;
+    public static List<String> getFilter_items_in_query_list_for_int() {
+        return filter_items_in_query_list_for_int;
+    }
+
+    public static String getFilterItemForNodeInstanceForString() {
+        return FILTER_ITEM_FOR_NODE_INSTANCE_FOR_STRING;
+    }
+
+    public static String getFilterItemForNodeInstanceForInt() {
+        return FILTER_ITEM_FOR_NODE_INSTANCE_FOR_INT;
     }
 }

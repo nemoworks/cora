@@ -1,5 +1,6 @@
 package cora.graph.coraCache;
 
+import cora.util.SHAUtil;
 import graphql.execution.ExecutionStepInfo;
 import graphql.execution.ResultPath;
 import org.apache.commons.lang.StringUtils;
@@ -49,12 +50,11 @@ public class CacheKey {
                 keyBuilder.append(")");
                 executionStepInfo = executionStepInfo.getParent();
             }
-            String s = keyBuilder.toString();
-            System.out.println(s);
         }
 
         public CacheKey build(){
-            return new CacheKey(resultPath,keyBuilder.toString());
+            String sha256 = SHAUtil.getStringSHA256(keyBuilder.toString());
+            return new CacheKey(resultPath,sha256.substring(0,8));
         }
     }
 }

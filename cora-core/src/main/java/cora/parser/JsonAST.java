@@ -44,11 +44,17 @@ public class JsonAST {
     }
 
     public int getInt(String key) {
-        String value = getString(key);
+        Object value = map.get(key);
         if (value == null || "".equals(value)) {
             return 0;
         }
-        return Integer.parseInt(value);
+        if (JSONParser.ValueContext.class.isInstance(value)) {
+            JSONParser.ValueContext ctx = (JSONParser.ValueContext) value;
+            String newValue = ctx.NUMBER().getText();
+            map.put(key, newValue);
+        }
+
+        return Integer.parseInt((String)map.get(key));
     }
 
     public long getLong(String key) {

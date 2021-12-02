@@ -3,7 +3,7 @@ package cora.groovy.impl;
 import cora.datafetcher.custom.CustomCoraRepository;
 import cora.groovy.GroovyScriptService;
 import cora.groovy.GroovyScriptTemplate;
-import cora.util.MD5Util;
+import cora.util.SHAUtil;
 import cora.util.VelocityTemplate;
 import graphql.com.google.common.collect.Maps;
 import groovy.lang.GroovyClassLoader;
@@ -36,7 +36,7 @@ public class CustomCoraRepoFactory implements GroovyScriptService {
         map.put("customCode",script);
         String fullScript = VelocityTemplate.build(scriptBuilder, map);
         String oldMd5 = nameAndMd5.get(nodeType+apiName);
-        String newMd5 = MD5Util.getStringMD5(fullScript);
+        String newMd5 = SHAUtil.getStringSHA256(fullScript);
         if (oldMd5 != null && oldMd5.equals(newMd5)) {
             return;
         }
