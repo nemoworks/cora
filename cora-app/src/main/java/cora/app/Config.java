@@ -51,8 +51,8 @@ public class Config {
      */
     @Bean
     public CoraRepository<JSONObject> mongodbCoraRepository() {
-//        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName);
-        return new RelationalCoraRepositoryImpl(collectionName);
+        return new MongodbCoraRepositoryImpl(mongoTemplate, collectionName);
+//        return new RelationalCoraRepositoryImpl(collectionName);
     }
 
     /**
