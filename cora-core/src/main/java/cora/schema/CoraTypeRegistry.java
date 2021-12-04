@@ -42,11 +42,20 @@ public class CoraTypeRegistry {
          *          }
          */
         List<InputValueDefinition> inputValueDefinitions = new ArrayList<>();
-        GQLTemplate.getFilter_items_in_query_list().forEach(item-> inputValueDefinitions.add(new InputValueDefinition(item,new TypeName("String"))));
+        GQLTemplate.getFilter_items_in_query_list_for_string().forEach(item-> inputValueDefinitions.add(new InputValueDefinition(item,new TypeName("String"))));
         InputObjectTypeDefinition inputObjectTypeDefinition = InputObjectTypeDefinition.newInputObjectDefinition()
-                .name(GQLTemplate.getFilterItemForNodeInstance())
+                .name(GQLTemplate.getFilterItemForNodeInstanceForString())
                 .inputValueDefinitions(inputValueDefinitions).build();
         typeDefinitionRegistry.add(inputObjectTypeDefinition);
+
+        List<InputValueDefinition> intInputValueDefinitions = new ArrayList<>();
+        GQLTemplate.getFilter_items_in_query_list_for_int().forEach(item->{
+            intInputValueDefinitions.add(new InputValueDefinition(item,new TypeName("Int")));
+        });
+        InputObjectTypeDefinition intInputObjectTypeDefinition = InputObjectTypeDefinition.newInputObjectDefinition()
+                .name(GQLTemplate.getFilterItemForNodeInstanceForInt())
+                .inputValueDefinitions(intInputValueDefinitions).build();
+        typeDefinitionRegistry.add(intInputObjectTypeDefinition);
 
     }
 

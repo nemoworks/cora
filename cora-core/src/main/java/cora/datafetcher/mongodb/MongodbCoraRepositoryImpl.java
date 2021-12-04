@@ -61,7 +61,7 @@ public class MongodbCoraRepositoryImpl implements CoraRepository<JSONObject> {
         JsonAST jsonAST = JsonAST.parseJSON(filters.toJSONString());
         MongodbQueryFilterParser mongodbQueryFilterParser =
                 new MongodbQueryFilterParser(new MongodbQueryFilterMapper());
-        Query query = mongodbQueryFilterParser.parse(jsonAST);
+        Query query = mongodbQueryFilterParser.parse(nodeType,jsonAST);
         query.addCriteria(Criteria.where("nodeType").is(nodeType));
         List<JSONObject> jsonObjects = mongoTemplate.find(query, JSONObject.class, collectionName);
         return jsonObjects;
