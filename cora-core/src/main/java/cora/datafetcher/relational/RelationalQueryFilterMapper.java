@@ -5,7 +5,7 @@ import cora.datafetcher.QueryFilterMapper;
 public class RelationalQueryFilterMapper implements QueryFilterMapper<String> {
     @Override
     public String equalOperation(String key, Object value) {
-        String query = "data->>'" + key + "'= " + "'" + value.toString() + "'";
+        String query = "data->>'" + key + "'= " + "'" + value + "'";
         return query;
     }
 
@@ -27,5 +27,31 @@ public class RelationalQueryFilterMapper implements QueryFilterMapper<String> {
         }
         query.append(fields[fields.length-1]);
         return query.toString();
+    }
+
+    @Override
+    public String gtOperation(String key, Object value) {
+        String query = null;
+        String type = value.getClass().getSimpleName();
+        if (type.equals("Integer")){
+            query = "(data->>'" + key + "')::int> " + value;
+        }
+        return query;
+    }
+
+    @Override
+    public String ltOperation(String key, Object value) {
+        String query = null;
+        String type = value.getClass().getSimpleName();
+        if (type.equals("Integer")){
+            query = "(data->>'" + key + "')::int< " + value;
+        }
+        return query;
+    }
+
+    @Override
+    public String neqOperation(String key, Object value) {
+        String query = "data->>'" + key + "'!= " + "'" + value + "'";
+        return query;
     }
 }

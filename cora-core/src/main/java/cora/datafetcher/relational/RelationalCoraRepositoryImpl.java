@@ -163,7 +163,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
         JsonAST jsonAST = JsonAST.parseJSON(filters.toJSONString());
         RelationalQueryFilterParser relationalQueryFilterParser =
                 new RelationalQueryFilterParser(new RelationalQueryFilterMapper());
-        String filters_sql = relationalQueryFilterParser.parse(jsonAST);
+        String filters_sql = relationalQueryFilterParser.parse(nodeType, jsonAST);
 
         Map<String,String> map = new HashMap<>();
         map.put("collectionName",collectionName);
