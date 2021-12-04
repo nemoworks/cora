@@ -3,6 +3,8 @@ package cora.datafetcher.relational;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import cora.datafetcher.CoraRepository;
+import cora.parser.JsonAST;
+import cora.parser.sql.RelationalQueryFilterParser;
 import cora.util.VelocityTemplate;
 import org.postgresql.util.PGobject;
 
@@ -19,8 +21,8 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     private Connection connection;
     private final String collectionName;
-    private final String QUERY_TEMPLATE = "SELECT * FROM ${collectionName} WHERE ${searchVar} = ?;";
-    private final String INSERT_TEMPLATE = "INSERT INTO ${collectionName}(nodetype, data) VALUES(?, ?)";
+    private final String QUERY_TEMPLATE = "SELECT * FROM ${collectionName} WHERE ${searchVar} = ?";
+    private final String INSERT_TEMPLATE = "INSERT INTO ${collectionName}(_id, nodetype, data) VALUES(?, ?, ?)";
 
     public RelationalCoraRepositoryImpl(String collectionName) {
         this.collectionName = collectionName;
@@ -42,18 +44,28 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
         map.put("collectionName", collectionName);
         String query = VelocityTemplate.build(INSERT_TEMPLATE, map);
 
+        UUID uuid=UUID.randomUUID();
+        String uuidString = uuid.toString().replace("-", "");
+
         try (PreparedStatement pst = connection.prepareStatement(query)) {
-            PGobject pGobject = new PGobject();
-            pGobject.setType("json");
-            pGobject.setValue(data.toString());
-            pst.setString(1, nodeType);
-            pst.setObject(2, pGobject);
+            PGobject uuidObject = new PGobject();
+            uuidObject.setType("uuid");
+            uuidObject.setValue(uuidString);
+
+            PGobject dataObject = new PGobject();
+            dataObject.setType("json");
+            dataObject.setValue(data.toString());
+
+            pst.setObject(1, uuidObject);
+            pst.setString(2, nodeType);
+            pst.setObject(3, dataObject);
             pst.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+        data.put("_id", uuidString);
         data.put("nodeType", nodeType);
         return data;
     }
@@ -79,7 +91,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
-                jsonObject.put("id", rs.getString("_id"));
+                jsonObject.put("_id", rs.getString("_id"));
                 jsonObject.put("nodeType", rs.getString("nodetype"));
                 jsonObject.putAll((JSONObject) JSON.parse(rs.getString("data")));
             }
@@ -87,6 +99,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println(jsonObject);
         return jsonObject;
     }
 
@@ -103,7 +116,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("id", rs.getString("_id"));
+                jsonObject.put("_id", rs.getString("_id"));
                 jsonObject.put("nodeType", rs.getString("nodetype"));
                 jsonObject.putAll((JSONObject) JSON.parse(rs.getString("data")));
                 jsonObjectList.add(jsonObject);
@@ -132,7 +145,7 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
                 ResultSet rs = pst.executeQuery();
 
                 while (rs.next()) {
-                    jsonObject.put("id", rs.getString("_id"));
+                    jsonObject.put("_id", rs.getString("_id"));
                     jsonObject.put("nodeType", rs.getString("nodetype"));
                     jsonObject.putAll((JSONObject) JSON.parse(rs.getString("data")));
                 }
@@ -147,7 +160,31 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
 
     @Override
     public List<JSONObject> queryNodeInstanceList(String nodeType, JSONObject filters) {
-        return null;
+        JsonAST jsonAST = JsonAST.parseJSON(filters.toJSONString());
+        RelationalQueryFilterParser relationalQueryFilterParser =
+                new RelationalQueryFilterParser(new RelationalQueryFilterMapper());
+        String filters_sql = relationalQueryFilterParser.parse(nodeType, jsonAST);
+
+        Map<String,String> map = new HashMap<>();
+        map.put("collectionName",collectionName);
+        map.put("searchVar","nodetype");
+        String query = VelocityTemplate.build(QUERY_TEMPLATE, map) + filters_sql;
+
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setString(1, nodeType);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("_id", rs.getString("_id"));
+                jsonObject.put("nodeType", rs.getString("nodetype"));
+                jsonObject.putAll((JSONObject) JSON.parse(rs.getString("data")));
+                jsonObjectList.add(jsonObject);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return jsonObjectList;
     }
 
     @Override
@@ -168,14 +205,14 @@ public class RelationalCoraRepositoryImpl implements CoraRepository<JSONObject> 
     }
 
     public static void main(String args[]) {
-        String jsonString = "{\"invoiceDate\":\"abc1\",\"invoiceCompany\":\"中创\"}";
+        String jsonString = "{\"group\":\"adbc23\",\"month\":34}";
         List<String> instaceIds = Arrays.asList("96de44f5-e4b2-48ee-99aa-4fc9f86d2bd4",
                 "5902f23f-4184-426c-91d5-991a697b6b05", "96de44f5-e4b2-48ee-99aa-4fc9f86d2bd4");
         JSONObject data = (JSONObject) JSON.parse(jsonString);
 
-        RelationalCoraRepositoryImpl relationalCoraRepository = new RelationalCoraRepositoryImpl("jieshixing");
-        relationalCoraRepository.createNodeInstance("Bill", data);
-//        relationalCoraRepository.queryNodeInstanceById("96de44f5-e4b2-48ee-99aa-4fc9f86d2bd4", "Bill");
+        RelationalCoraRepositoryImpl relationalCoraRepository = new RelationalCoraRepositoryImpl("jieshixin");
+        relationalCoraRepository.createNodeInstance("Saler", data);
+//        relationalCoraRepository.queryNodeInstanceById("a2d44113-6bef-448c-9f0d-8d6d8ef8efe5", "Bill");
 //        relationalCoraRepository.queryNodeInstanceList("Bill");
 //        relationalCoraRepository.queryNodeInstanceList(instaceIds);
 

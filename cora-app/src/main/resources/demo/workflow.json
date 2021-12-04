@@ -1,0 +1,30 @@
+{
+  "name": "流程定义",
+  "flow":{
+    "start": {
+      "name": "startNode",
+      "desc": "提交请假单",
+      "coraNode": "leave",
+      "nextNode": {
+          "submit": "review",
+          "cancel":"start",
+          "abandon": "end"
+      }
+    },
+    "review": {
+      "name": "reviewNode",
+      "desc": "审批请假单",
+      "coraNode": "review",
+      "nextNode": {
+        "pass": "end",
+        "reject": "end"
+      }
+    },
+    "end": {
+      "name": "endNode",
+      "desc": "流程结束",
+      "coraNode": "",
+      "nexTNode": {}
+    }
+  }
+}
