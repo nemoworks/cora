@@ -2,6 +2,7 @@ package cora.app;
 
 import com.alibaba.fastjson.JSONObject;
 import cora.CoraBuilder;
+import cora.datafetcher.relational.RelationalCoraRepositoryImpl;
 import cora.groovy.GroovyScriptService;
 import cora.groovy.GroovyScriptTemplate;
 import cora.groovy.impl.CustomCoraRepoFactory;
