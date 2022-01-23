@@ -18,7 +18,7 @@ import static com.google.gson.stream.JsonToken.END_DOCUMENT;
 public class JsonSchemaParser implements CoraParser {
 
     public enum JSONSchemaType {
-        string, date, number, object, array
+        string, date, number, object, array,bool
     }
 
     @Override
@@ -117,6 +117,9 @@ public class JsonSchemaParser implements CoraParser {
                             break;
                         case date:
                             fieldDefinitions.add(new FieldDefinition(key, new TypeName("Date")));
+                            break;
+                        case bool:
+                            fieldDefinitions.add(new FieldDefinition(key, new TypeName("Boolean")));
                             break;
                         default:
                             break;

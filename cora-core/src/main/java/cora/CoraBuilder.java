@@ -27,10 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,9 +71,11 @@ public class CoraBuilder {
     };
 
     // load json objects in /resources/demo/jieshixing.json to initial cora
-    public void graphNodeInitialization() {
-        final String path = "classpath*:demo/jieshixing.json";
+    public void graphNodeInitialization() throws FileNotFoundException, UnsupportedEncodingException {
+        final String path = "classpath*:demo/prestores.json";
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+        OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("/Users/tangcong/Desktop/cora/cora-app/src/main/resources/demo/exampleWrite.json"),"UTF-8");
         try {
             Arrays.stream(resolver.getResources(path))
                     .parallel()
@@ -89,14 +88,13 @@ public class CoraBuilder {
                             for (String line; (line = br.readLine()) != null; ) {
                                 template.append(line).append("\n");
                             }
-                            JSONObject parseObject = JSON.parseObject(template.toString());
-                            parseObject.getInnerMap().keySet().forEach(key -> {
-                                JSONObject jsonObject = (JSONObject) parseObject.getInnerMap().get(key);
-                                jsonObject.put("nodeType", StringUtil.upperCase(key));
-                                List<Definition> parse = coraParser.parseSchema(jsonObject.toString());
-                                String nodeName = CoraGraph.merge(parse);
-                                this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
-                            });
+                            JSONArray jsonArray = JSON.parseArray(template.toString());
+
+                            JSONObject parseObject = JSON.parseObject(jsonArray.get(0).toString());
+
+                                parseObject.put("nodeType", "Prestore");
+                                osw.write(parseObject.toJSONString());
+                                System.out.println("a");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -118,7 +116,6 @@ public class CoraBuilder {
             String nodeName = CoraGraph.merge(parse);
             this.addNewTypeAndDataFetcherInGraphQL(CoraGraph.getCoraNode(nodeName));
         });
-        //this.graphNodeInitialization();
         coraTypeRegistry.buildTypeRegistry();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(coraTypeRegistry.getTypeDefinitionRegistry()
                 , coraRuntimeWiring.getRuntimeWiring());
